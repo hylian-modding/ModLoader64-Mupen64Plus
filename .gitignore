@@ -1,7 +1,7 @@
-*.log
-*.ipch
-.vscode
-.vs
-bin
-build
-node_modules
+/*.log
+/*.ipch
+/.vscode
+/.vs
+/bin
+/build
+/node_modules
