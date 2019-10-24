@@ -1,5 +1,4 @@
 npm install
-npm run clean
 npm run build
 
 # Keep console open when script finishes
