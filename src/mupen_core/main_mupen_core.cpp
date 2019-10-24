@@ -215,10 +215,6 @@ void KillEmuProc(void) {
 	/* Shut down and release the Core library */
 	(*CoreShutdown)();
 	DetachCoreLib();
-
-	/* free allocated memory */
-	if (l_TestShotList != NULL)
-		free(l_TestShotList);
 }
 
 #ifdef WIN32

@@ -17,8 +17,6 @@ extern const char *l_ROMFilepath;
 extern const char *l_SaveStatePath;
 extern const char *l_DataDirPath;
 
-extern int  *l_TestShotList;
-extern int   l_TestShotIdx;
 extern int   l_SaveOptions;
 
 extern int Initialize();
