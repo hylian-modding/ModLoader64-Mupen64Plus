@@ -5,10 +5,32 @@
 #include "nodejs_callback.h"
 
 #include <chrono>
+#include <ctime>
 #include <thread>
+#include <fstream>
+#include <memory>
+#include <iostream>
+#include <string>
+#include <cstdio>
 using namespace std;
 
 #include "../../mupen_core/core_interface.h"
+
+bool debugPrinting = false;
+
+template<typename ... Args>
+void log(const std::string& format, Args ... args) {
+    size_t size = snprintf( nullptr, 0, format.c_str(), args ... ) + 1;
+    unique_ptr<char[]> buf( new char[ size ] ); 
+    snprintf( buf.get(), size, format.c_str(), args ... );
+    string input = string( buf.get(), buf.get() + size - 1 );
+
+    time_t now = time(0);
+    string output = input + string(": ") + string(ctime(&now));
+    std::ofstream outfile;
+    outfile.open("m64p_memory-log.txt", std::ios_base::app);
+    outfile << output;
+}
 
 // #########################################################
 // ## Bit Utility
@@ -148,6 +170,9 @@ Value npmRdRamWriteBuffer(const CallbackInfo& info) {
     Uint8Array arr = info[1].As<Uint8Array>();
     size_t len = arr.ByteLength();
 
+    if (debugPrinting)
+        log("RdRamWriteBuffer{ addr[%#010x], len[%i] }", addr, len);
+
     for (size_t i = 0; i < len; i++)
         (*RdRamWrite8)(addr + i, arr[i]);
 
@@ -157,6 +182,10 @@ Value npmRdRamWriteBuffer(const CallbackInfo& info) {
 Value npmRdRamWriteF32(const CallbackInfo& info) {
     uint32_t addr = info[0].As<Number>().Uint32Value();
     float value = info[1].As<Number>().FloatValue();
+
+    if (debugPrinting)
+        log("RdRamWriteF32{ addr[%#010x], val[%f] }", addr, value);
+
     uint32_t val;
     memcpy((void*)(&val), (void*)(&value), 4);
     (*RdRamWrite32)(addr, val);  
@@ -166,6 +195,10 @@ Value npmRdRamWriteF32(const CallbackInfo& info) {
 Value npmRdRamWrite32(const CallbackInfo& info) {
     uint32_t addr = info[0].As<Number>().Uint32Value();
     uint32_t value = info[1].As<Number>().Uint32Value();
+
+    if (debugPrinting)
+        log("RdRamWrite32{ addr[%#010x], val[%#010x] }", addr, value);
+    
     (*RdRamWrite32)(addr, value);    
     return info.Env().Undefined();
 }
@@ -173,6 +206,10 @@ Value npmRdRamWrite32(const CallbackInfo& info) {
 Value npmRdRamWrite16(const CallbackInfo& info) {
     uint32_t addr = info[0].As<Number>().Uint32Value();
     uint16_t value = info[1].As<Number>().Uint32Value();
+
+    if (debugPrinting)
+        log("RdRamWrite16{ addr[%#010x], val[%#06x] }", addr, value);
+    
     (*RdRamWrite16)(addr, value);    
     return info.Env().Undefined();
 }
@@ -180,6 +217,10 @@ Value npmRdRamWrite16(const CallbackInfo& info) {
 Value npmRdRamWrite8(const CallbackInfo& info) {
     uint32_t addr = info[0].As<Number>().Uint32Value();
     uint8_t value = info[1].As<Number>().Uint32Value();
+
+    if (debugPrinting)
+        log("RdRamWrite8{ addr[%#010x], val[%#04x] }", addr, value);
+    
     (*RdRamWrite8)(addr, value);    
     return info.Env().Undefined();
 }
@@ -191,7 +232,10 @@ Value npmRdRamWriteBitsBuffer(const CallbackInfo& info) {
     Uint8Array arr = info[1].As<Uint8Array>();
     size_t len = arr.ByteLength() / 8;
     const uint8_t* val = setBitsBuffer(arr, len);
-    
+
+    if (debugPrinting)
+        log("RdRamWriteBitsBuffer{ addr[%#010x], val[%i] }", addr, val);
+        
     for (size_t i = 0; i < len; i++) 
         (*RdRamWrite8)(addr + i, val[i]);    
     return info.Env().Undefined();
@@ -200,7 +244,12 @@ Value npmRdRamWriteBitsBuffer(const CallbackInfo& info) {
 Value npmRdRamWriteBits8(const CallbackInfo& info) {
     uint32_t addr = info[0].As<Number>().Uint32Value();
     Uint8Array value = info[1].As<Uint8Array>();
-    (*RdRamWrite8)(addr, setBits8(value));    
+    uint8_t val = setBits8(value);
+
+    if (debugPrinting)
+        log("RdRamWriteBits8{ addr[%#010x], val[%#04x] }", addr, val);
+    
+    (*RdRamWrite8)(addr, val);    
     return info.Env().Undefined();
 }
 
@@ -209,6 +258,10 @@ Value npmRdRamWriteBit8(const CallbackInfo& info) {
     size_t offset = info[1].As<Number>().Uint32Value();
     bool set = info[2].As<Number>().ToBoolean();
     uint8_t val = (*RdRamRead8)(addr);
+
+    if (debugPrinting)
+        log("RdRamWriteBit8{ addr[%#010x], val[%#04x] }", addr, val);
+    
     (*RdRamWrite8)(addr, setBit8(val, offset, set));    
     return info.Env().Undefined();
 }
@@ -337,6 +390,9 @@ Value npmRdRamWritePtrBuffer(const CallbackInfo& info) {
     uint32_t addr = (((*RdRamRead32)(ptr) & ~0xFF000000) | 0x00) + ptr_offset;
     size_t len = arr.ByteLength();
 
+    if (debugPrinting)
+        log("RdRamWritePtrBuffer{ ptr[%#010x], addr[%#010x], len[%i] }", ptr, addr, len);
+
     for (size_t i = 0; i < len; i++)
         (*RdRamWrite8)(addr + i, arr[i]);
     
@@ -348,6 +404,10 @@ Value npmRdRamWritePtrF32(const CallbackInfo& info) {
     uint32_t ptr_offset = info[1].As<Number>().Uint32Value();
     float value = info[2].As<Number>().FloatValue();
     uint32_t addr = (((*RdRamRead32)(ptr) & ~0xFF000000) | 0x00) + ptr_offset;
+
+    if (debugPrinting)
+        log("RdRamWritePtrF32{ ptr[%#010x], addr[%#010x], val[%f] }", ptr, addr, value);
+
     uint32_t val;
     memcpy((void*)(&val), (void*)(&value), 4);
     (*RdRamWrite32)(addr, val);  
@@ -359,6 +419,10 @@ Value npmRdRamWritePtr32(const CallbackInfo& info) {
     uint32_t ptr_offset = info[1].As<Number>().Uint32Value();
     uint32_t value = info[2].As<Number>().Uint32Value();
     uint32_t addr = (((*RdRamRead32)(ptr) & ~0xFF000000) | 0x00) + ptr_offset;
+
+    if (debugPrinting)
+        log("RdRamWritePtr32{ ptr[%#010x], addr[%#010x], val[%#010x] }", ptr, addr, value);
+
     (*RdRamWrite32)(addr, value);    
     return info.Env().Undefined();
 }
@@ -368,6 +432,10 @@ Value npmRdRamWritePtr16(const CallbackInfo& info) {
     uint32_t ptr_offset = info[1].As<Number>().Uint32Value();
     uint16_t value = info[2].As<Number>().Uint32Value();
     uint32_t addr = (((*RdRamRead32)(ptr) & ~0xFF000000) | 0x00) + ptr_offset;
+
+    if (debugPrinting)
+        log("RdRamWritePtr16{ ptr[%#010x], addr[%#010x], val[%#06x] }", ptr, addr, value);
+
     (*RdRamWrite16)(addr, value);    
     return info.Env().Undefined();
 }
@@ -377,6 +445,10 @@ Value npmRdRamWritePtr8(const CallbackInfo& info) {
     uint32_t ptr_offset = info[1].As<Number>().Uint32Value();
     uint8_t value = info[2].As<Number>().Uint32Value();
     uint32_t addr = (((*RdRamRead32)(ptr) & ~0xFF000000) | 0x00) + ptr_offset;
+
+    if (debugPrinting)
+        log("RdRamWritePtr8{ ptr[%#010x], addr[%#010x], val[%#04x] }", ptr, addr, value);
+
     (*RdRamWrite8)(addr, value);    
     return info.Env().Undefined();
 }
@@ -391,6 +463,9 @@ Value npmRdRamWritePtrBitsBuffer(const CallbackInfo& info) {
     size_t len = arr.ByteLength() / 8;
     const uint8_t* val = setBitsBuffer(arr, len);
     
+    if (debugPrinting)
+        log("RdRamWritePtrBitsBuffer{ ptr[%#010x], addr[%#010x], val[%i] }", ptr, addr, val);
+        
     for (size_t i = 0; i < len; i++) 
         (*RdRamWrite8)(addr + i, val[i]);
     
@@ -402,6 +477,10 @@ Value npmRdRamWritePtrBits8(const CallbackInfo& info) {
     uint32_t ptr_offset = info[1].As<Number>().Uint32Value();
     Uint8Array value = info[2].As<Uint8Array>();
     uint32_t addr = (((*RdRamRead32)(ptr) & ~0xFF000000) | 0x00) + ptr_offset;
+
+    if (debugPrinting)
+        log("RdRamWritePtrBits8{ ptr[%#010x], addr[%#010x], val[%#04x] }", ptr, addr, value);
+    
     (*RdRamWrite8)(addr, setBits8(value));    
     return info.Env().Undefined();
 }
@@ -413,6 +492,10 @@ Value npmRdRamWritePtrBit8(const CallbackInfo& info) {
     uint32_t addr = (((*RdRamRead32)(ptr) & ~0xFF000000) | 0x00) + ptr_offset;
     bool set = info[3].As<Number>().ToBoolean();
     uint8_t val = (*RdRamRead8)(addr);
+
+    if (debugPrinting)
+        log("RdRamWritePtrBit8{ ptr[%#010x], addr[%#010x], val[%#04x] }", ptr, addr, val);
+    
     (*RdRamWrite8)(addr, setBit8(val, bit_offset, set));
     return info.Env().Undefined();
 }
@@ -454,6 +537,9 @@ Value npmRomWriteBuffer(const CallbackInfo& info) {
     Uint8Array arr = info[1].As<Uint8Array>();
     size_t len = arr.ByteLength();
 
+    if (debugPrinting)
+        log("RomWriteBuffer{ addr[%#010x], len[%i] }", addr, len);
+
     for (size_t i = 0; i < len; i++)
         (*RomWrite8)(addr + i, arr[i]);
     
@@ -463,6 +549,10 @@ Value npmRomWriteBuffer(const CallbackInfo& info) {
 Value npmRomWrite32(const CallbackInfo& info) {
 	uint32_t addr = info[0].As<Number>().Uint32Value();
 	uint32_t value = info[1].As<Number>().Uint32Value();
+
+    if (debugPrinting)
+        log("RomWrite32{ addr[%#010x], val[%#010x] }", addr, value);
+    
 	(*RomWrite32)(addr, value);
     return info.Env().Undefined();
 }
@@ -470,6 +560,10 @@ Value npmRomWrite32(const CallbackInfo& info) {
 Value npmRomWrite16(const CallbackInfo& info) {
 	uint32_t addr = info[0].As<Number>().Uint32Value();
 	uint16_t value = info[1].As<Number>().Uint32Value();
+
+    if (debugPrinting)
+        log("RomWrite16{ addr[%#010x], val[%#06x] }", addr, value);
+    
     (*RomWrite16)(addr, value);
     return info.Env().Undefined();
 }
@@ -477,8 +571,11 @@ Value npmRomWrite16(const CallbackInfo& info) {
 Value npmRomWrite8(const CallbackInfo& info) {
 	uint32_t addr = info[0].As<Number>().Uint32Value();
 	uint8_t value = info[1].As<Number>().Uint32Value();
-    (*RomWrite8)(addr, value);
 
+    if (debugPrinting)
+        log("RomWrite8{ addr[%#010x], val[%#04x] }", addr, value);
+    
+    (*RomWrite8)(addr, value);
     return info.Env().Undefined();
 }
 
@@ -525,6 +622,15 @@ Value npmMemoryCacheRefresh(const CallbackInfo& info) {
         this_thread::sleep_for(chrono::milliseconds(1));
         
 	(*MemoryCacheRefresh)();
+    return info.Env().Undefined();
+}
+
+// #########################################################
+// ## Misc
+// #########################################################
+
+Value npmMemoryDebugLogger(const CallbackInfo& info) {
+	debugPrinting = info[0].As<Boolean>().ToBoolean();
     return info.Env().Undefined();
 }
 
@@ -608,5 +714,8 @@ Object M64P_Memory_Init(Env env, Object exports) {
     // SaveStates
     exports.Set("memoryCacheRefresh", Function::New(env, npmMemoryCacheRefresh));
 
+    // Misc
+    exports.Set("memoryDebugLogger", Function::New(env, npmMemoryDebugLogger));
+    
     return exports;
 }
