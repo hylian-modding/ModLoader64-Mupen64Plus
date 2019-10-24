@@ -28,10 +28,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-static u32 addr_align(u32 address)
-{
-	return (address & 0xffffff) >> 2;
-}
+static u32 ram_addr_align(u32 address) { return (address & 0xffffff) >> 2; }
+static u32 rom_addr_align(u32 address) { return address/4; }
 
 // #########################################################
 // ## RDRam Memory
@@ -54,7 +52,7 @@ EXPORT const u8* CALL read_rdram_buffer(u32 addr, u32 length)
 EXPORT u32 CALL read_rdram_32(u32 addr)
 {
 	struct device* dev = &g_dev;
-	return (u32)dev->rdram.dram[addr_align(addr)];
+	return (u32)dev->rdram.dram[ram_addr_align(addr)];
 }
 
 EXPORT u16 CALL read_rdram_16(u32 addr)
@@ -66,9 +64,8 @@ EXPORT u16 CALL read_rdram_16(u32 addr)
 EXPORT u8 CALL read_rdram_8(u32 addr)
 {
 	struct device* dev = &g_dev;
-	size_t offset = (addr_align(addr) * 4) + (3 - addr & 3);
-	u8 value = (u8)(((u8*)dev->rdram.dram)[offset]);
-	return value;
+	size_t offset = (ram_addr_align(addr) * 4) + (3 - addr & 3);
+	return (u8)(((u8*)dev->rdram.dram)[offset]);
 }
 
 // -------------------------------------------
@@ -76,7 +73,7 @@ EXPORT u8 CALL read_rdram_8(u32 addr)
 EXPORT void CALL write_rdram_32(u32 addr, u32 value)
 {
 	struct device* dev = &g_dev;
-	size_t offset = addr_align(addr) * 4;
+	size_t offset = ram_addr_align(addr) * 4;
 	memcpy((u8*)dev->rdram.dram + offset, &value, 4);
 }
 
@@ -90,7 +87,7 @@ EXPORT void CALL write_rdram_16(u32 addr, u16 value)
 EXPORT void CALL write_rdram_8(u32 addr, u8 value)
 {
 	struct device* dev = &g_dev;
-	size_t offset = (addr_align(addr) * 4) + (3 - addr & 3);
+	size_t offset = (ram_addr_align(addr) * 4) + (3 - addr & 3);
 	((u8*)dev->rdram.dram)[offset] = value;
 }
 
@@ -127,7 +124,7 @@ EXPORT const u8* CALL read_rom_buffer(u32 addr, u32 length)
 
 EXPORT u32 CALL read_rom_32(u32 addr)
 {
-	size_t offset = addr_align(addr) * 4;
+	size_t offset = rom_addr_align(addr) * 4;
 	u32 value = mem_base_u32(g_mem_base, MM_CART_ROM)[offset];
 
 	if (!g_EmulatorRunning)
@@ -147,8 +144,8 @@ EXPORT u8 CALL read_rom_8(u32 addr)
 	if (!g_EmulatorRunning) {
 		return (u8)((u8*)mem_base_u32(g_mem_base, MM_CART_ROM)[addr]);
 	} else {
-		size_t offset = (addr_align(addr) * 4) + (3 - addr & 3);
-		return (u8)((u8*)mem_base_u32(g_mem_base, MM_CART_ROM)[offset]);
+		size_t offset = (rom_addr_align(addr) * 4) + (3 - addr & 3);
+		return (u8)(((u8*)mem_base_u32(g_mem_base, MM_CART_ROM))[offset]);
 	}
 }
 
@@ -157,7 +154,7 @@ EXPORT u8 CALL read_rom_8(u32 addr)
 EXPORT void CALL write_rom_32(u32 addr, u32 value)
 {
 	u32* rom = mem_base_u32(g_mem_base, MM_CART_ROM);
-	size_t offset = addr_align(addr);
+	size_t offset = rom_addr_align(addr);
 
 	if (!g_EmulatorRunning)
 		value = __bswap_32(value);
@@ -177,7 +174,7 @@ EXPORT void CALL write_rom_8(u32 addr, u8 value)
 	if (!g_EmulatorRunning) {
 		((u8*)mem_base_u32(g_mem_base, MM_CART_ROM))[addr] = value;
 	} else {
-		size_t offset = (addr_align(addr) * 4) + (3 - addr & 3);
+		size_t offset = (rom_addr_align(addr) * 4) + (3 - addr & 3);
 		((u8*)mem_base_u32(g_mem_base, MM_CART_ROM))[offset] = value;
 	}
 }
