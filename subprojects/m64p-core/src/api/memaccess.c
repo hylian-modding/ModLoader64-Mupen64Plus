@@ -147,9 +147,8 @@ EXPORT u8 CALL read_rom_8(u32 addr)
 	if (!g_EmulatorRunning) {
 		return (u8)((u8*)mem_base_u32(g_mem_base, MM_CART_ROM)[addr]);
 	} else {
-		u8* rom = (u8*)mem_base_u32(g_mem_base, MM_CART_ROM);
 		size_t offset = (addr_align(addr) * 4) + (3 - addr & 3);
-		return (u8)(rom[offset]);
+		return (u8)((u8*)mem_base_u32(g_mem_base, MM_CART_ROM)[offset]);
 	}
 }
 
@@ -178,9 +177,8 @@ EXPORT void CALL write_rom_8(u32 addr, u8 value)
 	if (!g_EmulatorRunning) {
 		((u8*)mem_base_u32(g_mem_base, MM_CART_ROM))[addr] = value;
 	} else {
-		u8* rom = (u8*)mem_base_u32(g_mem_base, MM_CART_ROM);
 		size_t offset = (addr_align(addr) * 4) + (3 - addr & 3);
-		rom[offset] = value;
+		((u8*)mem_base_u32(g_mem_base, MM_CART_ROM))[offset] = value;
 	}
 }
 
