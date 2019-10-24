@@ -45,7 +45,7 @@
             "src/mupen_core/plugin.cpp",
 
             "src/node/nodejs_main.cpp",
-            "src/node/mupen_core/nodejs_callbacks.cpp",
+            "src/node/mupen_core/nodejs_callback.cpp",
             "src/node/mupen_core/nodejs_core.cpp",
             "src/node/mupen_core/nodejs_interface.cpp",
             "src/node/mupen_core/nodejs_memory.cpp",

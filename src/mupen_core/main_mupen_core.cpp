@@ -11,7 +11,7 @@
 #include "osal_preproc.h"
 #include "plugin.h"
 #include "version.h"
-#include "../node/mupen_core/nodejs_callbacks.h"
+#include "../node/mupen_core/nodejs_callback.h"
 
   /* Version number for Binding config section parameters */
 #define CONFIG_PARAM_VERSION     1.00

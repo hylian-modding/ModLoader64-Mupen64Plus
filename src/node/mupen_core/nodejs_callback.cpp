@@ -1,27 +1,25 @@
-#include "nodejs_callbacks.h"
-
-// #########################################################
-// ## Universal Variables
-// #########################################################
-
-unsigned int count_frame = 0;
-static unsigned int ready_frame = 1;
+#include "nodejs_callback.h"
+#include <chrono>
+#include <thread>
+using namespace std;
 
 // #########################################################
 // ## Threading Handlers
 // #########################################################
+
+unsigned int count_frame = -1;
 
 #ifdef WIN32
     #include <windows.h>
 
     HANDLE mutex_frame = CreateMutex(NULL, FALSE, NULL); 
 
-    bool mutex_frame_get() {
-        bool ready;
+    int mutex_frame_get() {
+        int count;
         DWORD dWait = WaitForSingleObject(mutex_frame, INFINITE);
         switch (dWait) {
             case WAIT_OBJECT_0: 
-                __try { ready = ready_frame; }
+                __try { count = count_frame; }
                 __finally { 
                     if (! ReleaseMutex(mutex_frame)) 
                         printf("FRAME_CALLBACK_EXCEPTION\n"); 
@@ -30,14 +28,14 @@ static unsigned int ready_frame = 1;
             case WAIT_ABANDONED: 
                 printf("FRAME_CALLBACK_EXCEPTION\n"); 
                 break;
-        } return ready;
+        } return count;
     }
 
-    void mutex_frame_set(int ready) {
+    void mutex_frame_set(int count) {
         DWORD dWait = WaitForSingleObject(mutex_frame, INFINITE);
         switch (dWait) {
             case WAIT_OBJECT_0: 
-                __try { ready_frame = ready; }
+                __try { count_frame = count; }
                 __finally { 
                     if (! ReleaseMutex(mutex_frame)) 
                         printf("FRAME_CALLBACK_EXCEPTION\n"); 
@@ -53,17 +51,17 @@ static unsigned int ready_frame = 1;
 
     pthread_mutex_t mutex_frame = PTHREAD_MUTEX_INITIALIZER;
 
-    bool mutex_frame_get() {
-        bool ready;
+    int mutex_frame_get() {
+        int count;
         pthread_mutex_lock(&mutex_frame);
-        ready = ready_frame;
+        count = count_frame;
         pthread_mutex_unlock(&mutex_frame);
-        return ready;
+        return count;
     }
 
-    void mutex_frame_set(int ready) {
+    void mutex_frame_set(int count) {
         pthread_mutex_lock(&mutex_frame);
-        ready_frame = ready;
+        count_frame = count;
         pthread_mutex_unlock(&mutex_frame);
     }
 #endif
@@ -76,41 +74,11 @@ static unsigned int ready_frame = 1;
 // HexWindow* winHex;
 
 // #########################################################
-// ## Async Worker (ThreadSafe) Objects
+// ## Mupen Frame Callback Function
 // #########################################################
 
-class AW_Frame : public AsyncWorker {
-    public:
-        AW_Frame(Function& callback) : AsyncWorker(callback) {}
-        ~AW_Frame() {}
-        void Execute() {}
-        void OnOK() {
-            HandleScope scope(Env());
-            Callback().Call({Number::New(Env(), count_frame)});
-            mutex_frame_set(1);
-        }
-}; AW_Frame* awFrame;
- 
-// #########################################################
-// ## External Callback Initializer Functions
-// #########################################################
-
-void Init_Callback_Frame(Function& cb) {
-    awFrame = new AW_Frame(cb); 
-    awFrame->SuppressDestruct();
-}
-
-// #########################################################
-// ## Mupen Callback Functions
-// #########################################################
-
-#include <chrono>
-#include <thread>
-using namespace std;
 void M64P_Callback_Frame(unsigned int frameIndex) {
-	count_frame = frameIndex;
-    mutex_frame_set(0);
-    if (awFrame) awFrame->Queue();
+    mutex_frame_set(frameIndex);
 
     // //Init memory tools if necessary
     // if (frameIndex == 0) {
@@ -120,6 +88,26 @@ void M64P_Callback_Frame(unsigned int frameIndex) {
     // // Update memory tools
     // winHex->runOnce();
     
-    while (!mutex_frame_get())
+    while (mutex_frame_get() != -1)
         this_thread::sleep_for(chrono::milliseconds(1));
+}
+
+// #########################################################
+// ## Node Functions
+// #########################################################
+
+Number npmGetFrameCount(const CallbackInfo& info) {
+    return Number::New(info.Env(), mutex_frame_get());
+}
+
+Value npmSetFrameCount(const CallbackInfo& info) {
+    uint32_t value = info[0].As<Number>().Uint32Value();
+    mutex_frame_set(value);
+    return info.Env().Undefined();
+}
+
+Object M64P_Callback_Init(Env env, Object exports) {
+    exports.Set("getFrameCount", Function::New(env, npmGetFrameCount));
+    exports.Set("setFrameCount", Function::New(env, npmSetFrameCount));
+    return exports;
 }
