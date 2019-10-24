@@ -1,0 +1,6 @@
+/projects/unix/_obj*/
+/projects/unix/libmupen64plus*.so*
+/projects/vs2017/.vs/
+/projects/vs2017/Debug/
+/projects/vs2017/Release/
+/projects/vs2017/mupen64plus-core.vcxproj.user
