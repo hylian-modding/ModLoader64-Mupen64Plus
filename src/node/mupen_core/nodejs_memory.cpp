@@ -2,6 +2,11 @@
 #include <m64p_memaccess.h>
 
 #include "nodejs_memory.h"
+#include "nodejs_callback.h"
+
+#include <chrono>
+#include <thread>
+using namespace std;
 
 #include "../../mupen_core/core_interface.h"
 
@@ -511,12 +516,14 @@ Number npmCartGetCountryCode(const CallbackInfo& info) {
 	return Number::New(info.Env(), (*CartGetCountryCode)());
 }
 
-
 // #########################################################
 // ## SaveStates
 // #########################################################
 
 Value npmMemoryCacheRefresh(const CallbackInfo& info) {
+    while (GetFrameCount() == -1)
+        this_thread::sleep_for(chrono::milliseconds(1));
+        
 	(*MemoryCacheRefresh)();
     return info.Env().Undefined();
 }

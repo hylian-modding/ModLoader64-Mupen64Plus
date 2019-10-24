@@ -3,7 +3,11 @@
     #include <napi.h>
     using namespace Napi;
 
+    int GetFrameCount();
+    
+    void M64P_Callback_Init(void);
     void M64P_Callback_Frame(unsigned int frameIndex);
+    void M64P_Callback_Destroy(void);
 
     // #########################################################
     // ## Node Functions

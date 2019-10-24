@@ -28,6 +28,7 @@
     // ## Special Functions
     // #########################################################
 
+    Number npmCoreEmuState(const CallbackInfo& info);
     Number npmInitEmu(const CallbackInfo& info);
     Number npmLoadRom(const CallbackInfo& info);
     Number npmRunEmulator(const CallbackInfo& info);

@@ -88,6 +88,14 @@ Value npmSetVerboseLog(const CallbackInfo& info) {
 // ## Special Functions
 // #########################################################
 
+Number npmCoreEmuState(const CallbackInfo& info) {
+    uint32_t value;
+    uint32_t err = (*CoreDoCommand)(M64CMD_CORE_STATE_QUERY, M64CORE_EMU_STATE, &value);
+
+    if (!err) return Number::New(info.Env(), value);
+    else return Number::New(info.Env(), -1);
+}
+
 Number npmInitEmu(const CallbackInfo& info) {
     int ret = Initialize();
     return Number::New(info.Env(), ret);
@@ -220,6 +228,7 @@ Object M64P_Interface_Init(Env env, Object exports) {
     exports.Set("setVerboseLog", Function::New(env, npmSetVerboseLog));
     
     // Special Functions
+    exports.Set("coreEmuState", Function::New(env, npmCoreEmuState));
     exports.Set("initialize", Function::New(env, npmInitEmu));
     exports.Set("loadRom", Function::New(env, npmLoadRom));
     exports.Set("runEmulator", Function::New(env, npmRunEmulator));

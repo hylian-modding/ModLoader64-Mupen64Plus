@@ -9,21 +9,22 @@
         'conditions': [        
             ['OS=="win"', {
                 "defines": [ "WIN32", "NDEBUG", "_CONSOLE", "_CRT_SECURE_NO_DEPRECATE" ],
-                'libraries' : [ "opengl32.lib" ]
+                'libraries': [ 
+                    "<(module_root_dir)/libs/SDL2.lib",
+                    "<(module_root_dir)/libs/SDL2main.lib",
+                    "<(module_root_dir)/libs/fmt.lib",
+                    "opengl32.lib" 
+                ],
             }],
             ['OS=="linux"', {
-                "cflags_cc+": [ "-fpermissive" ]
+                "cflags_cc+": [ "-fpermissive" ],
+                'libraries': [ "/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so" ]
             }]
         ],
         'include_dirs': [
             "<!@(node -p \"require('node-addon-api').include\")",
             "<(module_root_dir)/subprojects/m64p-core/src/api",
             "<(module_root_dir)/includes"
-        ],
-        'libraries': [ 
-            "<(module_root_dir)/libs/SDL2.lib",
-            "<(module_root_dir)/libs/SDL2main.lib",
-            "<(module_root_dir)/libs/fmt.lib",
         ],
         "sources": [
             # "src/imgui/imgui.cpp",
@@ -46,7 +47,6 @@
 
             "src/node/nodejs_main.cpp",
             "src/node/mupen_core/nodejs_callback.cpp",
-            "src/node/mupen_core/nodejs_core.cpp",
             "src/node/mupen_core/nodejs_interface.cpp",
             "src/node/mupen_core/nodejs_memory.cpp",
             "src/node/mupen_core/nodejs_utility.cpp",

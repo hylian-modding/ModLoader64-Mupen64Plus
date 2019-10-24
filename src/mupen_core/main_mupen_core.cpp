@@ -215,6 +215,9 @@ void KillEmuProc(void) {
 	/* Shut down and release the Core library */
 	(*CoreShutdown)();
 	DetachCoreLib();
+
+	// Kill frame callback
+	M64P_Callback_Destroy();
 }
 
 #ifdef WIN32
@@ -363,6 +366,7 @@ int Boot() {
 	}
 
 	// Hook Modloader frame callback
+	M64P_Callback_Init();
 	(*CoreDoCommand)(M64CMD_SET_FRAME_CALLBACK, 0, &M64P_Callback_Frame);
 
 	/* run the game */
