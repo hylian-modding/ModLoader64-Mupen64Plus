@@ -178,8 +178,8 @@ endif
 
 # set special flags per-system
 ifeq ($(OS), FREEBSD)
-  TARGET = libmupen64plus$(POSTFIX).so.2.0.0
-  SONAME = libmupen64plus$(POSTFIX).so.2
+  TARGET = mupen64plus$(POSTFIX).so
+  SONAME = mupen64plus$(POSTFIX).so.2
   LDFLAGS += -Wl,-Bsymbolic -shared -Wl,-export-dynamic -Wl,-soname,$(SONAME)
   LDLIBS += -L${LOCALBASE}/lib -lc
   ifeq ($(ARCH_DETECTED), 64BITS)
@@ -189,8 +189,8 @@ ifeq ($(OS), FREEBSD)
   endif
 endif
 ifeq ($(OS), LINUX)
-  TARGET = libmupen64plus$(POSTFIX).so.2.0.0
-  SONAME = libmupen64plus$(POSTFIX).so.2
+  TARGET = mupen64plus$(POSTFIX).so
+  SONAME = mupen64plus$(POSTFIX).so.2
   LDFLAGS += -Wl,-Bsymbolic -shared -Wl,-export-dynamic -Wl,-soname,$(SONAME)
   LDLIBS += -ldl
   # only export api symbols
@@ -204,7 +204,7 @@ endif
 ifeq ($(OS), OSX)
   OSX_SDK_PATH = $(shell xcrun --sdk macosx --show-sdk-path)
 
-  TARGET = libmupen64plus$(POSTFIX).dylib
+  TARGET = mupen64plus$(POSTFIX).dylib
   LDFLAGS += -framework CoreFoundation -dynamiclib
   LDLIBS += -ldl
   ifeq ($(ARCH_DETECTED), 64BITS)
