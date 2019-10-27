@@ -88,7 +88,6 @@ static m64p_handle l_CoreEventsConfig = NULL;
 #define kbdSave "Kbd Mapping Save State"
 #define kbdLoad "Kbd Mapping Load State"
 #define kbdIncrement "Kbd Mapping Increment Slot"
-#define kbdReset "Kbd Mapping Reset"
 #define kbdSpeeddown "Kbd Mapping Speed Down"
 #define kbdSpeedup "Kbd Mapping Speed Up"
 #define kbdScreenshot "Kbd Mapping Screenshot"
@@ -543,7 +542,6 @@ int event_set_core_defaults(void)
     ConfigSetDefaultInt(l_CoreEventsConfig, kbdSave, sdl_native2keysym(SDL_SCANCODE_F5),              "SDL keysym for saving the emulator state");
     ConfigSetDefaultInt(l_CoreEventsConfig, kbdLoad, sdl_native2keysym(SDL_SCANCODE_F7),              "SDL keysym for loading the emulator state");
     ConfigSetDefaultInt(l_CoreEventsConfig, kbdIncrement, sdl_native2keysym(SDL_SCANCODE_UNKNOWN),    "SDL keysym for advancing the save state slot");
-    ConfigSetDefaultInt(l_CoreEventsConfig, kbdReset, sdl_native2keysym(SDL_SCANCODE_F9),             "SDL keysym for resetting the emulator");
     ConfigSetDefaultInt(l_CoreEventsConfig, kbdSpeeddown, sdl_native2keysym(SDL_SCANCODE_F10),        "SDL keysym for slowing down the emulator");
     ConfigSetDefaultInt(l_CoreEventsConfig, kbdSpeedup, sdl_native2keysym(SDL_SCANCODE_F11),          "SDL keysym for speeding up the emulator");
     ConfigSetDefaultInt(l_CoreEventsConfig, kbdScreenshot, sdl_native2keysym(SDL_SCANCODE_F12),       "SDL keysym for taking a screenshot");
@@ -627,8 +625,6 @@ void event_sdl_keydown(int keysym, int keymod)
         main_state_load(NULL); /* load using current slot */
     else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdIncrement)))
         main_state_inc_slot();
-    else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdReset)))
-        main_reset(0);
     else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdSpeeddown)))
         main_speeddown(5);
     else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdSpeedup)))
