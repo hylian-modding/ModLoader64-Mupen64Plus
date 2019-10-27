@@ -11,8 +11,7 @@ using namespace std;
 // ## Memory Tools
 // #########################################################
 
-// #include "../../mem_tools/hex/HexWindow.h"
-// HexWindow* winHex;
+
 
 // #########################################################
 // ## Threading Handlers
@@ -43,8 +42,6 @@ void SetFrameCount(int count) {
 void M64P_Callback_Init(void) { frame_lock = SDL_CreateMutex(); }
 
 void M64P_Callback_Frame(unsigned int frameIndex) {
-    SetFrameCount(frameIndex);
-
     // //Init memory tools if necessary
     // if (frameIndex == 0) {
 	// 	winHex = new HexWindow();
@@ -52,7 +49,11 @@ void M64P_Callback_Frame(unsigned int frameIndex) {
 
     // // Update memory tools
     // winHex->runOnce();
+
+    // Allow modloader access
+    SetFrameCount(frameIndex);
     
+    // Wait for modloader to finish
     while (GetFrameCount() != -1)
         this_thread::sleep_for(chrono::milliseconds(1));
 }

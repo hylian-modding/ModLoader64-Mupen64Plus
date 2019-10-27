@@ -12,7 +12,6 @@
                 'libraries': [ 
                     "<(module_root_dir)/libs/SDL2.lib",
                     "<(module_root_dir)/libs/SDL2main.lib",
-                    "<(module_root_dir)/libs/fmt.lib",
                     "opengl32.lib" 
                 ],
             }],
@@ -26,18 +25,7 @@
             "<(module_root_dir)/subprojects/m64p-core/src/api",
             "<(module_root_dir)/includes"
         ],
-        "sources": [
-            # "src/imgui/imgui.cpp",
-            # "src/imgui/imgui_demo.cpp",
-            # "src/imgui/imgui_draw.cpp",
-            # "src/imgui/imgui_impl_opengl2.cpp",
-            # "src/imgui/imgui_impl_sdl.cpp",
-            # "src/imgui/imgui_stdlib.cpp",
-            # "src/imgui/imgui_widgets.cpp",
-            # "src/imgui/stb_impl.cpp",
-
-            #"src/mem_tools/hex/HexWindow.cpp",
-          
+        "sources": [          
             "src/mupen_core/core_compare.cpp",
             "src/mupen_core/core_interface.cpp",
             "src/mupen_core/main_mupen_core.cpp",
@@ -51,12 +39,6 @@
             "src/node/mupen_core/nodejs_memory.cpp",
             "src/node/mupen_core/nodejs_utility.cpp",
             "src/node/yaz0/nodejs_yaz0.cpp",
-
-            # "src/settings/input/InputWindow.cpp",
-            # "src/settings/input/main_settings_input.cpp",
-            # "src/settings/input/MappingUtil.cpp",
-            # "src/settings/input/Mupen.cpp",
-            # "src/settings/input/sdl_key_converter.cpp",
 
             "subprojects/yaz0/chunk.cpp",
             "subprojects/yaz0/base.cpp",
