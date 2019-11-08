@@ -148,9 +148,9 @@ u32 nintendoEnc(u8 *src, int size, int pos, u32 *pMatchPos)
 
 int encodeYaz0(u8 *src, int srcSize, uint8_t *tBuf)
 {
-    size_t bOffset = 16;
     Ret r = {0, 0};
     u8 dst[24]; // 8 codes * 3 bytes maximum
+    size_t bOffset = 0;
     int dstSize = 0;
     int percent = -1;
 
@@ -203,10 +203,10 @@ int encodeYaz0(u8 *src, int srcSize, uint8_t *tBuf)
         //write eight codes
         if (validBitCount == (u32)8)
         {
-            memcpy((void*)(tBuf + bOffset), (void*)&currCodeByte, 1);
+            memcpy((void *)(tBuf + bOffset), (void *)&currCodeByte, 1);
             bOffset += 1;
 
-            memcpy((void*)(tBuf + bOffset), (void*)dst, r.dstPos);
+            memcpy((void *)(tBuf + bOffset), (void *)dst, r.dstPos);
             bOffset += r.dstPos;
 
             dstSize += r.dstPos + 1;
@@ -219,15 +219,14 @@ int encodeYaz0(u8 *src, int srcSize, uint8_t *tBuf)
         if ((r.srcPos + 1) * 100 / srcSize != percent)
         {
             percent = (r.srcPos + 1) * 100 / srcSize;
-            //printf("\r %3d%%", percent);
         }
     }
     if (validBitCount > 0)
     {
-        memcpy((void*)(tBuf + bOffset), (void*)&currCodeByte, 1);
+        memcpy((void *)(tBuf + bOffset), (void *)&currCodeByte, 1);
         bOffset += 1;
 
-        memcpy((void*)(tBuf + bOffset), (void*)dst, r.dstPos);
+        memcpy((void *)(tBuf + bOffset), (void *)dst, r.dstPos);
         bOffset += r.dstPos;
 
         dstSize += r.dstPos + 1;
@@ -236,7 +235,6 @@ int encodeYaz0(u8 *src, int srcSize, uint8_t *tBuf)
         validBitCount = 0;
         r.dstPos = 0;
     }
-    //printf("\r done\n", percent);
 
     return dstSize;
 }
@@ -244,6 +242,8 @@ int encodeYaz0(u8 *src, int srcSize, uint8_t *tBuf)
 // #########################################################
 // ## Yaz0 Node Functions
 // #########################################################
+
+#include <cmath>
 
 Buffer<uint8_t> Yaz0_Encode(const CallbackInfo &info)
 {
@@ -253,17 +253,17 @@ Buffer<uint8_t> Yaz0_Encode(const CallbackInfo &info)
 
     uint8_t *tBuf = (uint8_t *)malloc(len * 2);
     uint32_t size = encodeYaz0(yBuf, len, tBuf);
+    size_t alignSize = ceil((float)(size + 16) / 16) * 16;
+    yBuf = (uint8_t *)calloc(alignSize, 1);
 
     const char *header = "Yaz0";
     u32 origSize = toDWORD(len);
-    memcpy((void *)tBuf, (void *)header, 4);
-    memcpy((void *)(tBuf + 4), (void *)origSize, 4);
+    memcpy((void *)yBuf, (void *)header, 4);
+    memcpy((void *)(yBuf + 4), (void *)&origSize, 4);
+    memcpy((void *)(yBuf + 16), (void *)tBuf, size);
+    //free(tBuf);
 
-    buf = Buffer<uint8_t>::New(info.Env(), tBuf, size);
-    free(yBuf);
-    free(tBuf);
-
-    return buf;
+    return Buffer<uint8_t>::New(info.Env(), yBuf, alignSize);
 }
 
 Buffer<uint8_t> Yaz0_Decode(const CallbackInfo &info)
@@ -273,16 +273,14 @@ Buffer<uint8_t> Yaz0_Decode(const CallbackInfo &info)
     uint8_t *yBuf = (uint8_t *)buf.Data();
 
     uint32_t size = 0;
-    memcpy((void*)size, (void*)(yBuf + 4), 4);
-    uint8_t * tBuf = (uint8_t *)malloc(size);
+    memcpy((void *)&size, (void *)(yBuf + 4), 4);
+    size = toDWORD(size);
 
+    uint8_t *tBuf = (uint8_t *)malloc(size);
     yBuf += 16;
     decode(yBuf, tBuf, size);
-    
-    buf = Buffer<uint8_t>::New(info.Env(), tBuf, size);
-    free(yBuf);
-    free(tBuf);
 
+    buf = Buffer<uint8_t>::New(info.Env(), tBuf, size);
     return buf;
 }
 
