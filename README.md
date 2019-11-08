@@ -27,11 +27,7 @@ development git: https://github.com/mupen64plus
 A majority of the source (while modified) is borrowed from
 the mupen64plus-ui-console source at the git page listed above.
 
-Yaz0 source borrowed from:
-https://gitlab.com/ice-spear-tools/yaz0-lib
-
 ### CREDITS:
 - SpiceyWolf ~ Creation/Maintenance of the repository.
 - Drahsid ~ Memory Tools.
-- Sylvain ~ Input Tool/Imgui implementation.
 - denoflions ~ Debugging and guidence of features.

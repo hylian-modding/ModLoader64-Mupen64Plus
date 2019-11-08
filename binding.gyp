@@ -39,11 +39,6 @@
             "src/node/mupen_core/nodejs_memory.cpp",
             "src/node/mupen_core/nodejs_utility.cpp",
             "src/node/yaz0/nodejs_yaz0.cpp",
-
-            "subprojects/yaz0/chunk.cpp",
-            "subprojects/yaz0/base.cpp",
-            "subprojects/yaz0/parser.cpp",
-            "subprojects/yaz0/creator.cpp",
         ]
     }]
 }
