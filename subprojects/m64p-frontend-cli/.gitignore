@@ -1,0 +1,5 @@
+*.vscode/
+/project/bin/
+/project/obj/
+/project/Makefile
+/project/.qmake.stash

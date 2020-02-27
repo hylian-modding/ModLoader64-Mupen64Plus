@@ -1,0 +1,6 @@
+*.vscode/
+/project/bin/
+/project/obj/
+/project/Makefile
+/project/.qmake.stash
+/project/ui_window_main.h

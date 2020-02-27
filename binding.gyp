@@ -3,42 +3,47 @@
         "target_name": "mupen64plus",
         "cflags!": [ "-fno-exceptions" ],
         "cflags_cc!": [ "-fno-exceptions" ],
-        'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ],
+        'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS', 'nGUI' ],
         'dependencies': [ "<!(node -p \"require('node-addon-api').gyp\")" ],
                     
         'conditions': [        
             ['OS=="win"', {
-                "defines": [ "WIN32", "NDEBUG", "_CONSOLE", "_CRT_SECURE_NO_DEPRECATE" ],
+                "defines": [ "WIN32" ],
                 'libraries': [ 
-                    "<(module_root_dir)/libs/SDL2.lib",
-                    "<(module_root_dir)/libs/SDL2main.lib",
-                    "opengl32.lib" 
+                    "<(module_root_dir)/subprojects/m64p-core/libs/x86/SDL2.lib",
+                    "<(module_root_dir)/subprojects/m64p-core/libs/x86/SDL2main.lib",
+                    #"<(module_root_dir)/subprojects/m64p-frontend-gui/project/bin/mupen64plus-frontend.lib",
+                    "<(module_root_dir)/subprojects/m64p-frontend-cli/project/bin/mupen64plus-frontend.lib",
                 ],
             }],
             ['OS=="linux"', {
                 "cflags_cc+": [ "-fpermissive" ],
-                'libraries': [ "/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so" ]
+                'libraries': [
+                    "-Wl,-rpath,'$$ORIGIN'",
+                    "-L/usr/local/lib -ldl -lSDL2 -lz",
+                    #"<(module_root_dir)/subprojects/m64p-frontend-gui/project/bin/libmupen64plus-frontend.so",
+                    "<(module_root_dir)/subprojects/m64p-frontend-cli/project/bin/libmupen64plus-frontend.so",
+                ],
             }]
         ],
         'include_dirs': [
             "<!@(node -p \"require('node-addon-api').include\")",
+            "<(module_root_dir)/subprojects/",
             "<(module_root_dir)/subprojects/m64p-core/src/api",
-            "<(module_root_dir)/includes"
+            "<(module_root_dir)/subprojects/m64p-core/includes/SDL2-2.0.6",
         ],
-        "sources": [          
-            "src/mupen_core/core_compare.cpp",
-            "src/mupen_core/core_interface.cpp",
-            "src/mupen_core/main_mupen_core.cpp",
-            "src/mupen_core/osal_dynamiclib.cpp",
-            "src/mupen_core/osal_files.cpp",            
-            "src/mupen_core/plugin.cpp",
+        "sources": [
+            # Mupen
+            "src/emulator/callback.cpp",
+            "src/emulator/interface.cpp",
+            "src/emulator/memory.cpp",
+            "src/emulator/utility.cpp",
 
-            "src/node/nodejs_main.cpp",
-            "src/node/mupen_core/nodejs_callback.cpp",
-            "src/node/mupen_core/nodejs_interface.cpp",
-            "src/node/mupen_core/nodejs_memory.cpp",
-            "src/node/mupen_core/nodejs_utility.cpp",
-            "src/node/yaz0/nodejs_yaz0.cpp",
+            # Yazo
+            "src/yaz0/yaz0.cpp",
+
+            # Main
+            "src/main.cpp",
         ]
     }]
 }

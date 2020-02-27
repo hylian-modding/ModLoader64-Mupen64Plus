@@ -1,0 +1,41 @@
+#ifndef IMPORTS_QT_H
+#define IMPORTS_QT_H
+
+    #include <Qt>
+    #include <QActionGroup>
+    #include <QApplication>
+    #include <QButtonGroup>
+    #include <QCheckBox>
+    #include <QCloseEvent>
+    #include <QComboBox>
+	#include <QCommandLineParser>
+    #include <QCoreApplication>
+    #include <QDesktopWidget>
+    #include <QDialog>
+    #include <QDir>
+    #include <QFileDialog>
+    #include <QGridLayout>
+    #include <QKeyEvent>
+    #include <QLabel>
+    #include <QLibrary>
+    #include <QLineEdit>
+    #include <QMainWindow>
+    #include <QMessageBox>
+    #include <QOpenGLFunctions>
+    #include <QOpenGLWindow>
+    #include <QProcess>
+    #include <QPushButton>
+    #include <QScrollArea>
+	#include <QSettings>
+    #include <QSlider>
+    #include <QString>
+    #include <QSurfaceFormat>
+    #include <QTabWidget>
+    #include <QTemporaryFile>
+    #include <QTextStream>
+    #include <QThread>
+    #include <QTimer>
+    #include <QValidator>
+    #include <QVBoxLayout>
+
+#endif
