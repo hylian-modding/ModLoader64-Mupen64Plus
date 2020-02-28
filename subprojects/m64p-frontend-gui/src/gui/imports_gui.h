@@ -1,5 +1,5 @@
-#ifndef IMPORTS_GUI_H
-#define IMPORTS_GUI_H
+#ifndef FRONTEND_IMPORTS_GUI_H
+#define FRONTEND_IMPORTS_GUI_H
 
     #include "component_settings.h"
     #include "dialog_cheat.h"

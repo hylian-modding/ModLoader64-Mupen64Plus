@@ -1,5 +1,5 @@
-#ifndef DIALOG_LOGVIEWER_H
-#define DIALOG_LOGVIEWER_H
+#ifndef FRONTEND_DIALOG_LOGVIEWER_H
+#define FRONTEND_DIALOG_LOGVIEWER_H
 
     #include "../imports_qt.h"
 

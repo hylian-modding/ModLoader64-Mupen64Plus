@@ -1,5 +1,5 @@
-#ifndef VERSION_H
-#define VERSION_H
+#ifndef FRONTEND_VERSION_H
+#define FRONTEND_VERSION_H
 
     #define CONSOLE_UI_NAME        "Mupen64Plus Frontend"
     #define CONSOLE_UI_VERSION     0x020509

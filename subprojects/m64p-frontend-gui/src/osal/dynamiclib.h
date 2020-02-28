@@ -1,5 +1,5 @@
-#ifndef OSAL_DYNAMICLIB_H
-#define OSAL_DYNAMICLIB_H
+#ifndef FRONTEND_OSAL_DYNAMICLIB_H
+#define FRONTEND_OSAL_DYNAMICLIB_H
 
     #include <m64p_types.h>
 

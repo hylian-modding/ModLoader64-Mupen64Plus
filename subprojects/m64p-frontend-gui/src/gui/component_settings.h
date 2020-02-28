@@ -1,5 +1,5 @@
-#ifndef COMPONENT_SETTINGS_H
-#define COMPONENT_SETTINGS_H
+#ifndef FRONTEND_COMPONENT_SETTINGS_H
+#define FRONTEND_COMPONENT_SETTINGS_H
 
     #include "../imports_m64p.h"
     #include "../imports_qt.h"

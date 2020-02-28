@@ -1,5 +1,5 @@
-#ifndef _YAZ0_
-#define _YAZ0_
+#ifndef NODEJS_YAZ0_H
+#define NODEJS_YAZ0_H
     #include <napi.h>
     using namespace Napi;
 

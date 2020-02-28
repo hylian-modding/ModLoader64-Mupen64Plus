@@ -1,5 +1,5 @@
-#ifndef _MEMORY_
-#define _MEMORY_
+#ifndef NODEJS_MEMORY_H
+#define NODEJS_MEMORY_H
     #include <napi.h>
     using namespace Napi;
 

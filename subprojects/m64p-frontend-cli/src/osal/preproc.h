@@ -1,5 +1,5 @@
-#ifndef OSAL_PREPROC_H
-#define OSAL_PREPROC_H
+#ifndef FRONTEND_OSAL_PREPROC_H
+#define FRONTEND_OSAL_PREPROC_H
 
 	#if defined(WIN32)
 		#include <windows.h>

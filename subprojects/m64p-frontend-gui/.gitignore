@@ -1,6 +1,10 @@
 *.vscode/
 /project/bin/
+/project/debug/
 /project/obj/
+/project/release/
 /project/Makefile
+/project/Makefile.Debug
+/project/Makefile.Release
 /project/.qmake.stash
 /project/ui_window_main.h

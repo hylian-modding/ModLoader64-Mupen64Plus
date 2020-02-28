@@ -1,5 +1,5 @@
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef FRONTEND_COMMON_H
+#define FRONTEND_COMMON_H
 
     #include <string>
 

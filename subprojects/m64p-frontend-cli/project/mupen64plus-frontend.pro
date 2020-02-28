@@ -5,9 +5,8 @@ QMAKE_PROJECT_DEPTH = 0
 DESTDIR = bin
 OBJECTS_DIR = obj
 MOC_DIR = obj
-VERSION = 0
 
-DEFINES += Q_DECL_EXPORT
+DEFINES += M64P_FRONTEND
 TARGET = mupen64plus-frontend
 TEMPLATE = lib
 
@@ -41,13 +40,20 @@ HEADERS  += \
 
 win32 {
     DEFINES += WIN32
+    DEFINES -= UNICODE
 
-    LIBS += ../../m64p-core/libs/x86/SDL2-2.0.6/lib/x86/SDL2.lib
+    LIBS += ../../m64p-core/libs/x86/SDL2.lib
+
+    CONFIG += shared
 }
 !win32 {
     QMAKE_CFLAGS += -std=c++11 -fpermissive
     QMAKE_CXXFLAGS += -std=c++11 -fpermissive
     QMAKE_LFLAGS += -std=c++11 -fpermissive
+    
+    LIBS += -L/usr/local/lib -ldl -lSDL2 -lz
+    
+    VERSION = 0
 
     QMAKE_POST_LINK = \
     cd ./bin && \
@@ -57,6 +63,4 @@ win32 {
     mv libmupen64plus-frontend.so.0.0.0 libmupen64plus-frontend.so.0 && \
     ln -s libmupen64plus-frontend.so.0 libmupen64plus-frontend.so && \
     cd ..
-
-    LIBS += -L/usr/local/lib -ldl -lSDL2 -lz
 }

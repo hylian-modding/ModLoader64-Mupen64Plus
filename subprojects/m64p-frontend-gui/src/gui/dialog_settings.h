@@ -1,5 +1,5 @@
-#ifndef SETTINGSDIALOG_H
-#define SETTINGSDIALOG_H
+#ifndef FRONTEND_SETTINGSDIALOG_H
+#define FRONTEND_SETTINGSDIALOG_H
 
     #include "../imports_qt.h"
 

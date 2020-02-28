@@ -1,5 +1,5 @@
-#ifndef IMPORTS_OSAL_H
-#define IMPORTS_OSAL_H
+#ifndef FRONTEND_IMPORTS_OSAL_H
+#define FRONTEND_IMPORTS_OSAL_H
 
     #include "dynamiclib.h"
     #include "files.h"

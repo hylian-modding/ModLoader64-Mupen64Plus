@@ -1,5 +1,5 @@
-#ifndef DIALOG_CONTROLLER_H
-#define DIALOG_CONTROLLER_H
+#ifndef FRONTEND_DIALOG_CONTROLLER_H
+#define FRONTEND_DIALOG_CONTROLLER_H
 
     #include "../imports_m64p.h"
     #include "../imports_qt.h"

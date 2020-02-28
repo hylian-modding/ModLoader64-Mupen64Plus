@@ -1,5 +1,5 @@
-#ifndef OSAL_FILES_H
-#define OSAL_FILES_H
+#ifndef FRONTEND_OSAL_FILES_H
+#define FRONTEND_OSAL_FILES_H
 	
 	#include "preproc.h"
 

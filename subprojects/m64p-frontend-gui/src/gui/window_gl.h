@@ -1,5 +1,5 @@
-#ifndef WINDOW_GL_H
-#define WINDOW_GL_H
+#ifndef FRONTEND_WINDOW_GL_H
+#define FRONTEND_WINDOW_GL_H
 
     #include "../imports_qt.h"
     #include "../common.h"

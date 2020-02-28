@@ -1,5 +1,5 @@
-#ifndef EXTENSION_VIDEO_H
-#define EXTENSION_VIDEO_H
+#ifndef FRONTEND_EXTENSION_VIDEO_H
+#define FRONTEND_EXTENSION_VIDEO_H
 
     #include "../imports_m64p.h"
     #include "window_gl.h"

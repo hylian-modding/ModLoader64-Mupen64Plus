@@ -1,5 +1,5 @@
-#ifndef _INTERFACE_
-#define _INTERFACE_
+#ifndef NODEJS_INTERFACE_H
+#define NODEJS_INTERFACE_H
     #include <napi.h>
     using namespace Napi;
 

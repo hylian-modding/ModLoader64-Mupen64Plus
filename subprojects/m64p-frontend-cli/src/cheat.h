@@ -1,5 +1,5 @@
-#ifndef CHEAT_H
-#define CHEAT_H
+#ifndef FRONTEND_CHEAT_H
+#define FRONTEND_CHEAT_H
 
 	#include "imports_m64p.h"
 

@@ -1,5 +1,5 @@
-#ifndef DIALOG_PLUGIN_H
-#define DIALOG_PLUGIN_H
+#ifndef FRONTEND_DIALOG_PLUGIN_H
+#define FRONTEND_DIALOG_PLUGIN_H
 
     #include "../imports_qt.h"
 

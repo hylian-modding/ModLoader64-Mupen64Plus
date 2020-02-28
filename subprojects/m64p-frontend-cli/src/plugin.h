@@ -1,5 +1,5 @@
-#ifndef PLUGIN_H
-#define PLUGIN_H
+#ifndef FRONTEND_PLUGIN_H
+#define FRONTEND_PLUGIN_H
 
   	#include <limits.h>
 

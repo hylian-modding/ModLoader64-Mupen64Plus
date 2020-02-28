@@ -1,5 +1,5 @@
-#ifndef SDL_KEYS_H
-#define SDL_KEYS_H
+#ifndef FRONTEND_SDL_KEYS_H
+#define FRONTEND_SDL_KEYS_H
 
     #include <stdint.h>
     #include <SDL.h>

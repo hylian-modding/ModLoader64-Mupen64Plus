@@ -1,5 +1,5 @@
-#ifndef THREAD_WORKER_H
-#define THREAD_WORKER_H
+#ifndef FRONTEND_THREAD_WORKER_H
+#define FRONTEND_THREAD_WORKER_H
 
     #include "../imports_qt.h"
     #include "../common.h"

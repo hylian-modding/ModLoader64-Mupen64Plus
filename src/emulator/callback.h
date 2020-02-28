@@ -1,5 +1,5 @@
-#ifndef _CALLBACKS_
-#define _CALLBACKS_
+#ifndef NODEJS_CALLBACKS_H
+#define NODEJS_CALLBACKS_H
     #include <napi.h>
     using namespace Napi;
 

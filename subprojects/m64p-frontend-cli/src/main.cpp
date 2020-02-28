@@ -480,8 +480,14 @@ int Main_ModLoader() {
     // Platform specific core preloader
     #if WIN32
         l_CoreLibPath = ".\\emulator\\mupen64plus.dll";
+        l_ConfigDirPath = ".\\emulator";
+        l_DataDirPath = ".\\emulator";
+        g_PluginDir = ".\\emulator";
     #else
         l_CoreLibPath =  "./emulator/mupen64plus.so";
+        l_ConfigDirPath = "./emulator";
+        l_DataDirPath = "./emulator";
+        g_PluginDir = "./emulator";
     #endif
 
 	/* load the Mupen64Plus core library */

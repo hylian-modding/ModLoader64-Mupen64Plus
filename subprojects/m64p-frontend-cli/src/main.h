@@ -1,5 +1,15 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef FRONTEND_MAIN_H
+#define FRONTEND_MAIN_H
+
+    #ifdef WIN32
+        #ifdef M64P_FRONTEND
+            #define expose __declspec(dllexport)
+        #else
+            #define  expose __declspec(dllimport)
+        #endif
+    #else
+        #define expose
+    #endif
 
     #if defined(__GNUC__)
         #define ATTR_FMT(fmtpos, attrpos) __attribute__ ((format (printf, fmtpos, attrpos)))
@@ -28,9 +38,9 @@
 
     extern int l_SaveOptions;
 
-    extern int Main_ModLoader();
-    extern int LoadGame(std::string);
-    extern int Boot();
-    extern int BootThread();
+    expose extern int Main_ModLoader();
+    expose extern int LoadGame(std::string);
+    expose extern int Boot();
+    expose extern int BootThread();  
 
 #endif

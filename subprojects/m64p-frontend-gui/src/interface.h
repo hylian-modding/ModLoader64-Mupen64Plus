@@ -1,5 +1,5 @@
-#ifndef INTERFACE_H
-#define INTERFACE_H
+#ifndef FRONTEND_INTERFACE_H
+#define FRONTEND_INTERFACE_H
 
     #include "imports_m64p.h"
     #include "imports_qt.h"

@@ -1,5 +1,5 @@
-#ifndef DEBUGGER_H
-#define DEBUGGER_H
+#ifndef FRONTEND_DEBUGGER_H
+#define FRONTEND_DEBUGGER_H
 
 	extern int debugger_loop_wait;
 

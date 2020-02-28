@@ -11,7 +11,6 @@
                 "defines": [ "WIN32" ],
                 'libraries': [ 
                     "<(module_root_dir)/subprojects/m64p-core/libs/x86/SDL2.lib",
-                    "<(module_root_dir)/subprojects/m64p-core/libs/x86/SDL2main.lib",
                     #"<(module_root_dir)/subprojects/m64p-frontend-gui/project/bin/mupen64plus-frontend.lib",
                     "<(module_root_dir)/subprojects/m64p-frontend-cli/project/bin/mupen64plus-frontend.lib",
                 ],

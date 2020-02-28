@@ -1,5 +1,5 @@
-#ifndef DIALOG_CHEAT_H
-#define DIALOG_CHEAT_H
+#ifndef FRONTEND_DIALOG_CHEAT_H
+#define FRONTEND_DIALOG_CHEAT_H
 
     #include "../imports_qt.h"
 

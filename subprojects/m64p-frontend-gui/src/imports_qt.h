@@ -1,5 +1,5 @@
-#ifndef IMPORTS_QT_H
-#define IMPORTS_QT_H
+#ifndef FRONTEND_IMPORTS_QT_H
+#define FRONTEND_IMPORTS_QT_H
 
     #include <Qt>
     #include <QActionGroup>

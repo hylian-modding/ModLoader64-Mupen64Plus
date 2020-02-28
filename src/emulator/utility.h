@@ -1,5 +1,5 @@
-#ifndef _UTILITY_
-#define _UTILITY_
+#ifndef NODEJS_UTILITY_H
+#define NODEJS_UTILITY_H
     #include <napi.h>
     using namespace Napi;
 
