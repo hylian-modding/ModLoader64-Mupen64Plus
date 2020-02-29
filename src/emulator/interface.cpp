@@ -101,69 +101,15 @@ Value npmLoadState(const CallbackInfo& info) {
 }
 
 // #########################################################
-// ## Nuke these functions
-// #########################################################
-
-Value npmSetConfigDir(const CallbackInfo& info) {
-    // NUKE THIS
-    return info.Env().Undefined();
-}
-
-Value npmSetDataDir(const CallbackInfo& info) {
-    // NUKE THIS
-    return info.Env().Undefined();
-}
-
-Value npmSetPluginDir(const CallbackInfo& info) {
-    // NUKE THIS
-    return info.Env().Undefined();
-}
-
-Value npmSetOsdEnabled(const CallbackInfo& info) {
-    // NUKE THIS
-    return info.Env().Undefined();
-}
-
-Value npmSetFullscreen(const CallbackInfo& info) {
-    // NUKE THIS
-    return info.Env().Undefined();
-}
-
-Value npmSetNoSpeedLimit(const CallbackInfo& info) {
-    // NUKE THIS
-    return info.Env().Undefined();
-}
-
-Value npmSetResolution(const CallbackInfo& info) {
-    // NUKE THIS
-    return info.Env().Undefined();
-}
-
-Value npmSetVerboseLog(const CallbackInfo& info) {
-    // NUKE THIS
-    return info.Env().Undefined();
-}
-
-// #########################################################
 // ## NAPI Export
 // #########################################################
 
 Object M64P_Interface_Init(Env env, Object exports) {    
     // Paths
-    exports.Set("setConfigDir", Function::New(env, npmSetConfigDir));
-    exports.Set("setDataDir", Function::New(env, npmSetDataDir));    
-    exports.Set("setPluginDir", Function::New(env, npmSetPluginDir));
     exports.Set("setSaveDir", Function::New(env, npmSetSaveDir));
     exports.Set("isMupenReady", Function::New(env, npmIsMupenReady));
     
-    // General Functions
-    exports.Set("setOsdEnabled", Function::New(env, npmSetOsdEnabled));
-    exports.Set("setFullscreen", Function::New(env, npmSetFullscreen));
-    exports.Set("setNoSpeedLimit", Function::New(env, npmSetNoSpeedLimit));    
-    exports.Set("setResolution", Function::New(env, npmSetResolution));
-    exports.Set("setVerboseLog", Function::New(env, npmSetVerboseLog));
-    
-    // Special Functions
+    // Functions
     exports.Set("coreEmuState", Function::New(env, npmCoreEmuState));
     exports.Set("initialize", Function::New(env, npmInitEmu));
     exports.Set("loadRom", Function::New(env, npmLoadRom));

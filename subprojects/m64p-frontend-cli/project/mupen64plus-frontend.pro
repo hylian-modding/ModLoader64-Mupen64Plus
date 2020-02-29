@@ -61,6 +61,5 @@ win32 {
     rm libmupen64plus-frontend.so.0 && \
     rm libmupen64plus-frontend.so.0.0 && \
     mv libmupen64plus-frontend.so.0.0.0 libmupen64plus-frontend.so.0 && \
-    ln -s libmupen64plus-frontend.so.0 libmupen64plus-frontend.so && \
     cd ..
 }

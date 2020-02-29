@@ -20,8 +20,8 @@
                 'libraries': [
                     "-Wl,-rpath,'$$ORIGIN'",
                     "-L/usr/local/lib -ldl -lSDL2 -lz",
-                    #"<(module_root_dir)/subprojects/m64p-frontend-gui/project/bin/libmupen64plus-frontend.so",
-                    "<(module_root_dir)/subprojects/m64p-frontend-cli/project/bin/libmupen64plus-frontend.so",
+                    #"<(module_root_dir)/subprojects/m64p-frontend-gui/project/bin/libmupen64plus-frontend.so.0",
+                    "<(module_root_dir)/subprojects/m64p-frontend-cli/project/bin/libmupen64plus-frontend.so.0",
                 ],
             }]
         ],
