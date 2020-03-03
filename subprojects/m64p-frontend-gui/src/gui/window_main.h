@@ -35,6 +35,8 @@
             void pluginWarning(QString name);
 
         private slots:
+            void modloader_boot();
+            
             void on_actionOpen_ROM_triggered();
 
             void on_actionPlugin_Paths_triggered();

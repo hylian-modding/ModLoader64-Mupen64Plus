@@ -40,7 +40,7 @@
 
     expose extern int Main_ModLoader();
     expose extern int LoadGame(std::string);
-    expose extern int Boot();
-    expose extern int BootThread();  
+    expose extern int PreBoot();
+    expose extern int PostBoot();
 
 #endif

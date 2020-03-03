@@ -77,6 +77,8 @@ win32 {
     DEFINES -= UNICODE
 
     LIBS += ../../m64p-core/libs/x86/SDL2.lib
+
+    CONFIG += shared
 }
 !win32 {
     QMAKE_CFLAGS += -std=c++11 -fpermissive

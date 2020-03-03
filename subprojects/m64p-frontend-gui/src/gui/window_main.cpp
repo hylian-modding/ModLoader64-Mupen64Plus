@@ -23,7 +23,7 @@ void MainWindow::updatePlugins()
     if (!settings->contains("videoPlugin")) {
         Filter.replace(0,"mupen64plus-video*");
         current = PluginDir->entryList(Filter);
-        default_value = "mupen64plus-video-GLideN64";
+        default_value = "mupen64plus-video-gliden64";
         default_value += OSAL_DLL_EXTENSION;
         if (current.isEmpty())
             settings->setValue("videoPlugin", "dummy");
@@ -60,10 +60,10 @@ void MainWindow::updatePlugins()
         else
             settings->setValue("inputPlugin", current.at(0));
     }
-    qtGfxPlugin = settings->value("videoPlugin").toString();
     qtAudioPlugin = settings->value("audioPlugin").toString();
-    qtRspPlugin = settings->value("rspPlugin").toString();
     qtInputPlugin = settings->value("inputPlugin").toString();
+    qtRspPlugin = settings->value("rspPlugin").toString();
+    qtGfxPlugin = settings->value("videoPlugin").toString();
 }
 
 void MainWindow::updateGB(Ui::MainWindow *ui)
@@ -237,11 +237,10 @@ MainWindow::MainWindow(QWidget *parent) :
     gles = 0;
     ui->setupUi(this);
 
-    m_title = "mupen64plus-gui    Build Date: ";
-    m_title += __DATE__;
+    m_title = "Mupen64Plus Gui Frontend";
     resetTitle();
 
-    QString ini_path = QDir(QCoreApplication::applicationDirPath()).filePath("mupen64plus-gui.ini");
+    QString ini_path = QDir(QString::fromStdString(GetAppDir())).filePath("mupen64plus-frontend.cfg");
     settings = new QSettings(ini_path, QSettings::IniFormat);
 
     if (!settings->isWritable())
@@ -289,7 +288,7 @@ MainWindow::MainWindow(QWidget *parent) :
         if (files.size() > 0)
             settings->setValue("coreLibPath", files.at(0));
         else
-            settings->setValue("coreLibPath", QDir(QCoreApplication::applicationDirPath()).filePath(OSAL_DEFAULT_DYNLIB_FILENAME));
+            settings->setValue("coreLibPath", QDir(QString::fromStdString(GetAppDir())).filePath(OSAL_DEFAULT_DYNLIB_FILENAME));
     }
     if (!settings->contains("pluginDirPath")) {
         QStringList files2;
@@ -302,7 +301,7 @@ MainWindow::MainWindow(QWidget *parent) :
             QFileInfo pluginPath(files2.at(0));
             settings->setValue("pluginDirPath", pluginPath.absolutePath());
         } else
-            settings->setValue("pluginDirPath", QCoreApplication::applicationDirPath());
+            settings->setValue("pluginDirPath", QString::fromStdString(GetAppDir()));
     }
     if (!settings->value("coreLibPath").isNull())
         qtCoreDirPath = settings->value("coreLibPath").toString();
@@ -314,6 +313,12 @@ MainWindow::MainWindow(QWidget *parent) :
     updatePlugins();
 
     logViewer = new LogViewer();
+
+    if (isModLoader) {
+        QTimer *timer = new QTimer(this); 
+        connect(timer, SIGNAL(timeout()), this, SLOT(modloader_boot()));
+        timer->start(1000);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -335,7 +340,6 @@ void MainWindow::setGLES() { gles = 1; }
 int MainWindow::getNoGUI() { return nogui; }
 int MainWindow::getVerbose() { return verbose; }
 void MainWindow::setVerbose() { verbose = 1; }
-
 
 void MainWindow::resizeMainWindow(int Width, int Height)
 {
@@ -478,6 +482,20 @@ void MainWindow::openROM(QString filename)
         list.removeLast();
     settings->setValue("RecentROMs",list.join(";"));
     updateOpenRecent();
+}
+
+void MainWindow::modloader_boot()
+{ 
+    int val = GetML_Value();
+    if (val == -2) {
+        if (!QtAttachCoreLib()) {
+            SetML_Value(0);
+            return;
+        } SetML_Value(loadROM(GetML_String()));
+    } else if (val == -3) {
+        runRom();
+        SetML_Value(-1);
+    }
 }
 
 void MainWindow::on_actionOpen_ROM_triggered()

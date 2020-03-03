@@ -13,7 +13,71 @@
 #include "plugin.h"
 #include "version.h"
 
+
+// #########################################################
+// ## Current Directory Replacement
+// #########################################################
+
+#ifdef WIN32
+    #include <direct.h>
+#define GetCurrentDir _getcwd
+#else
+    #include <unistd.h>
+    #define GetCurrentDir getcwd
+#endif
+ 
+std::string GetAppDir() {
+    char buf[FILENAME_MAX];
+    GetCurrentDir(buf, FILENAME_MAX);
+
+    #ifdef WIN32
+        if (!isModLoader) return std::string(buf) + "\\";
+        else return std::string(buf) + "\\emulator\\";
+    #else
+        if (!isModLoader) return std::string(buf) + "/";
+        else return std::string(buf) + "/emulator/";
+    #endif
+}
+
+// #########################################################
+// ## Modloader/Threading Handlers
+// #########################################################
+
+#include <SDL.h>
+#include <SDL_thread.h>
+
+static SDL_mutex *ml_lock;
+std::string ml_string = "";
+int ml_value = 0;
 bool isModLoader = false;
+
+std::string GetML_String() {
+    std::string val;
+	SDL_LockMutex(ml_lock);
+    val = ml_string;
+	SDL_UnlockMutex(ml_lock);
+    return val;
+}
+
+void SetML_String(std::string val) {
+	SDL_LockMutex(ml_lock);
+    ml_string = val;
+	SDL_UnlockMutex(ml_lock);
+}
+
+int GetML_Value() {
+    int val;
+	SDL_LockMutex(ml_lock);
+    val = ml_value;
+	SDL_UnlockMutex(ml_lock);
+    return val;
+}
+
+void SetML_Value(int val) {
+	SDL_LockMutex(ml_lock);
+    ml_value = val;
+	SDL_UnlockMutex(ml_lock);
+}
 
 /*********************************************************************************************************
  *  Callback functions from the core
@@ -27,7 +91,8 @@ void DebugMessage(int level, const char *message, ...)
   va_start(args, message);
   vsnprintf(msgbuf, 1024, message, args);
 
-  DebugCallback((char*)"GUI", level, msgbuf);
+  DebugCallback((char*)"M64N", level, msgbuf);
+  printf("M64N: %s\n", msgbuf);
 
   va_end(args);
 }
@@ -113,14 +178,9 @@ static m64p_media_loader media_loader =
     media_loader_get_dd_disk
 };
 
-m64p_error openROM(std::string filename)
-{
-    if (!QtAttachCoreLib())
-        return M64ERR_INVALID_STATE;
-
+int loadROM(std::string filename) {
     char *ROM_buffer = NULL;
     size_t romlength = 0;
-    uint32_t i;
 
     if (filename.find(".7z") != std::string::npos || (filename.find(".zip") != std::string::npos) || (filename.find(".ZIP") != std::string::npos))
     {
@@ -136,7 +196,7 @@ m64p_error openROM(std::string filename)
         {
             DebugMessage(M64MSG_ERROR, "couldn't open file '%s' for reading.", filename.c_str());
             DetachCoreLib();
-            return M64ERR_INVALID_STATE;
+            return 0; // M64ERR_INVALID_STATE
         }
         ROM_buffer = (char *) malloc(romlength);
         memcpy(ROM_buffer, data.constData(), romlength);
@@ -149,7 +209,7 @@ m64p_error openROM(std::string filename)
         {
             DebugMessage(M64MSG_ERROR, "couldn't open ROM file '%s' for reading.", filename.c_str());
             DetachCoreLib();
-            return M64ERR_INVALID_STATE;
+            return 0; // M64ERR_INVALID_STATE
         }
 
         romlength = file.size();
@@ -161,7 +221,7 @@ m64p_error openROM(std::string filename)
             free(ROM_buffer);
             file.close();
             DetachCoreLib();
-            return M64ERR_INVALID_STATE;
+            return 0; // M64ERR_INVALID_STATE
         }
         file.close();
     }
@@ -172,17 +232,22 @@ m64p_error openROM(std::string filename)
         DebugMessage(M64MSG_ERROR, "core failed to open ROM image file '%s'.", filename.c_str());
         free(ROM_buffer);
         DetachCoreLib();
-        return M64ERR_INVALID_STATE;
+        return 0; // M64ERR_INVALID_STATE
     }
     free(ROM_buffer); /* the core copies the ROM image, so we can release this buffer immediately */
+    return romlength;
+}
 
-    m64p_rom_header    l_RomHeader;
+m64p_error runRom() {
+    m64p_rom_header l_RomHeader;
+    uint32_t i;
+    
     /* get the ROM header for the currently loaded ROM image from the core */
     if ((*CoreDoCommand)(M64CMD_ROM_GET_HEADER, sizeof(l_RomHeader), &l_RomHeader) != M64ERR_SUCCESS)
     {
         DebugMessage(M64MSG_WARNING, "couldn't get ROM header information from core library");
         DetachCoreLib();
-        return M64ERR_INVALID_STATE;
+        return 0; // M64ERR_INVALID_STATE
     }
 
     /* search for and load plugins */
@@ -256,6 +321,13 @@ m64p_error openROM(std::string filename)
     CheatFreeAll();
 
     return M64ERR_SUCCESS;
+}
+
+m64p_error openROM(std::string filename)
+{
+    if (!QtAttachCoreLib()) return M64ERR_INVALID_STATE;
+    if (loadROM(filename) < 1) return M64ERR_INVALID_STATE;
+    return runRom();
 }
 
 int QT2SDL2MOD(Qt::KeyboardModifiers modifiers)

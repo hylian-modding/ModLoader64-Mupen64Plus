@@ -24,10 +24,10 @@ void SettingsDialog::handlePluginButton()
         settings->setValue("pluginDirPath", fileName);
         qtPluginDir = settings->value("pluginDirPath").toString();
 
-        settings->remove("inputPlugin");
-        settings->remove("videoPlugin");
         settings->remove("audioPlugin");
+        settings->remove("inputPlugin");
         settings->remove("rspPlugin");
+        settings->remove("videoPlugin");
         w->updatePlugins();
         initStuff();
     }
@@ -106,7 +106,7 @@ void SettingsDialog::initStuff()
     layout->addWidget(pluginPath,1,1);
     layout->addWidget(pluginButton,1,2);
 
-    QLabel *note = new QLabel("Note: If you change the Config Path, you need to close and re-open mupen64plus-gui before it will take effect.");
+    QLabel *note = new QLabel("Note: If you change the Config Path, you need to close and re-open 'Mupen64Plus Gui Frontend' before it will take effect.");
     QLabel *configLabel = new QLabel("Config Dir Path");
     configPath = new QLineEdit;
     configPath->setText(settings->value("configDirPath").toString());

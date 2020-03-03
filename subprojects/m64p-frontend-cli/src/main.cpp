@@ -457,23 +457,23 @@ void KillEmuProc(void) {
 }
 
 #ifdef WIN32
-DWORD WINAPI ExecuteM64PThread(void* data) {
-	(*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
-	KillEmuProc();
-	return 0;
-}
+    DWORD WINAPI ExecuteM64PThread(void* data) {
+        (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
+        KillEmuProc();
+        return 0;
+    }
 #else
 	#include <pthread.h>
 
-pthread_t threadId;
+    pthread_t threadId;
 
-void* ExecuteM64PThread(void* data) {
-	(*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
-	KillEmuProc();
-	auto err = pthread_join(threadId, NULL);
-	if (err) printf("Failed to join Thread : %s\n", strerror(err));
-	return NULL;
-}
+    void* ExecuteM64PThread(void* data) {
+        (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
+        KillEmuProc();
+        auto err = pthread_join(threadId, NULL);
+        if (err) printf("Failed to join Thread : %s\n", strerror(err));
+        return NULL;
+    }
 #endif
 
 int Main_ModLoader() {
@@ -575,7 +575,7 @@ int LoadGame(std::string romPath) {
     return (int)romlength;
 }
 
-int Boot() {
+int PreBoot() {
 	int i;
 
 	/* search for and load plugins */
@@ -604,7 +604,7 @@ int Boot() {
     return 0;
 }
 
-int BootThread() {
+int PostBoot() {
 	/* run the game */
 #ifdef WIN32
 	HANDLE thread = CreateThread(NULL, 0, ExecuteM64PThread, NULL, 0, NULL);

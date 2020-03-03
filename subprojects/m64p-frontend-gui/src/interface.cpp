@@ -136,9 +136,9 @@ bool QtAttachCoreLib()
         /* start the Mupen64Plus core library, load the configuration file */
         m64p_error rval;
         if (!qtConfigDir.isEmpty())
-            rval = (*CoreStartup)(CORE_API_VERSION, qtConfigDir.toLatin1().data() /*Config dir*/, QCoreApplication::applicationDirPath().toLatin1().data(), (char*)"Core", DebugCallback, NULL, NULL);
+            rval = (*CoreStartup)(CORE_API_VERSION, qtConfigDir.toLatin1().data() /*Config dir*/, QString::fromStdString(GetAppDir()).toLatin1().data(), (char*)"Core", DebugCallback, NULL, NULL);
         else
-            rval = (*CoreStartup)(CORE_API_VERSION, NULL /*Config dir*/, QCoreApplication::applicationDirPath().toLatin1().data(), (char*)"Core", DebugCallback, NULL, NULL);
+            rval = (*CoreStartup)(CORE_API_VERSION, NULL /*Config dir*/, QString::fromStdString(GetAppDir()).toLatin1().data(), (char*)"Core", DebugCallback, NULL, NULL);
         if (rval != M64ERR_SUCCESS)
         {
             DebugMessage(M64MSG_ERROR, "couldn't start Mupen64Plus core library.");
@@ -191,7 +191,7 @@ m64p_error AttachCoreLib(const char *CoreLibFilepath)
     }
     if (rval != M64ERR_SUCCESS || CoreHandle == NULL)
     {
-        QString corePath = QDir(QCoreApplication::applicationDirPath()).filePath(OSAL_DEFAULT_DYNLIB_FILENAME);
+        QString corePath = QDir(QString::fromStdString(GetAppDir())).filePath(OSAL_DEFAULT_DYNLIB_FILENAME);
         rval = osal_dynlib_open(&CoreHandle, corePath.toLatin1().data());
     }
     /* if we haven't found a good core library by now, then we're screwed */

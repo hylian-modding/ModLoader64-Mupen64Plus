@@ -50,14 +50,14 @@ Number npmLoadRom(const CallbackInfo& info) {
 }
 
 Number npmRunEmulator(const CallbackInfo& info) {
-    int ret = Boot();
+    int ret = PreBoot();
     if (ret != 0) return Number::New(info.Env(), ret);
 
 	// Hook Modloader frame callback
 	M64P_Callback_Create();
 	(*CoreDoCommand)(M64CMD_SET_FRAME_CALLBACK, 0, &M64P_Callback_Frame);
     
-    ret = BootThread();
+    ret = PostBoot();
     return Number::New(info.Env(), ret);
 }
 
@@ -104,7 +104,7 @@ Value npmLoadState(const CallbackInfo& info) {
 // ## NAPI Export
 // #########################################################
 
-Object M64P_Interface_Init(Env env, Object exports) {    
+Object M64P_Interface_Init(Env env, Object exports) {
     // Paths
     exports.Set("setSaveDir", Function::New(env, npmSetSaveDir));
     exports.Set("isMupenReady", Function::New(env, npmIsMupenReady));

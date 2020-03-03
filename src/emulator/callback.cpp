@@ -12,8 +12,7 @@ using namespace std;
 // #########################################################
 
 static SDL_mutex *frame_lock;
-unsigned int count_frame = -1;
-bool refresh_invoked = false;
+int count_frame = -1;
 
 int GetFrameCount() {
     int count;

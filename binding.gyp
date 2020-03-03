@@ -3,7 +3,7 @@
         "target_name": "mupen64plus",
         "cflags!": [ "-fno-exceptions" ],
         "cflags_cc!": [ "-fno-exceptions" ],
-        'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS', 'nGUI' ],
+        'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS', 'GUI' ],
         'dependencies': [ "<!(node -p \"require('node-addon-api').gyp\")" ],
                     
         'conditions': [        
@@ -11,8 +11,8 @@
                 "defines": [ "WIN32" ],
                 'libraries': [ 
                     "<(module_root_dir)/subprojects/m64p-core/libs/x86/SDL2.lib",
-                    #"<(module_root_dir)/subprojects/m64p-frontend-gui/project/bin/mupen64plus-frontend.lib",
-                    "<(module_root_dir)/subprojects/m64p-frontend-cli/project/bin/mupen64plus-frontend.lib",
+                    "<(module_root_dir)/subprojects/m64p-frontend-gui/project/bin/mupen64plus-frontend.lib",
+                    #"<(module_root_dir)/subprojects/m64p-frontend-cli/project/bin/mupen64plus-frontend.lib",
                 ],
             }],
             ['OS=="linux"', {
@@ -20,8 +20,8 @@
                 'libraries': [
                     "-Wl,-rpath,'$$ORIGIN'",
                     "-L/usr/local/lib -ldl -lSDL2 -lz",
-                    #"<(module_root_dir)/subprojects/m64p-frontend-gui/project/bin/libmupen64plus-frontend.so.0",
-                    "<(module_root_dir)/subprojects/m64p-frontend-cli/project/bin/libmupen64plus-frontend.so.0",
+                    "<(module_root_dir)/subprojects/m64p-frontend-gui/project/bin/libmupen64plus-frontend.so.0",
+                    #"<(module_root_dir)/subprojects/m64p-frontend-cli/project/bin/libmupen64plus-frontend.so.0",
                 ],
             }]
         ],
