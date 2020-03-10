@@ -382,8 +382,8 @@ static int SDLCALL event_sdl_filter(void *userdata, SDL_Event *event)
                         main_state_load(NULL); /* load using current slot */
                     else if (cmd == joyIncrement)
                         main_state_inc_slot();
-                    // else if (cmd == joyReset)
-                    //     main_reset(0);
+                    else if (cmd == joyReset)
+                        main_reset(0);
                     else if (cmd == joySpeedDown)
                         main_speeddown(5);
                     else if (cmd == joySpeedUp)
@@ -627,8 +627,8 @@ void event_sdl_keydown(int keysym, int keymod)
         main_state_load(NULL); /* load using current slot */
     else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdIncrement)))
         main_state_inc_slot();
-    // else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdReset)))
-    //     main_reset(0);
+    else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdReset)))
+        main_reset(0);
     else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdSpeeddown)))
         main_speeddown(5);
     else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdSpeedup)))
