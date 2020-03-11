@@ -313,12 +313,6 @@ MainWindow::MainWindow(QWidget *parent) :
     updatePlugins();
 
     logViewer = new LogViewer();
-
-    if (isModLoader) {
-        QTimer *timer = new QTimer(this); 
-        connect(timer, SIGNAL(timeout()), this, SLOT(modloader_boot()));
-        timer->start(1000);
-    }
 }
 
 MainWindow::~MainWindow()
@@ -482,20 +476,6 @@ void MainWindow::openROM(QString filename)
         list.removeLast();
     settings->setValue("RecentROMs",list.join(";"));
     updateOpenRecent();
-}
-
-void MainWindow::modloader_boot()
-{ 
-    int val = GetML_Value();
-    if (val == -2) {
-        if (!QtAttachCoreLib()) {
-            SetML_Value(0);
-            return;
-        } SetML_Value(loadROM(GetML_String()));
-    } else if (val == -3) {
-        runRom();
-        SetML_Value(-1);
-    }
 }
 
 void MainWindow::on_actionOpen_ROM_triggered()

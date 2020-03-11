@@ -91,36 +91,15 @@ int Main_ModLoader() {
 }
 
 int LoadGame(std::string filename) {
-    // Prepare rom for loading
-    // and invoke QtAttachCoreLib
-    // then invoke loadRom
-    SetML_String(filename);
-    SetML_Value(-2);    
-
-    // Wait for frontend to finish loading
-    while (GetML_Value() < 0)
-        this_thread::sleep_for(chrono::milliseconds(1));
-
-    // Return file size
-    int ret = GetML_Value();
-    SetML_Value(-1);
-    return ret;
-
-    // if (!QtAttachCoreLib()) return 0;
-    // int val = loadROM(filename);
-    // return val;
+    if (!QtAttachCoreLib()) return 0;
+    int val = loadROM(filename);
+    return val;
 }
 
 int PreBoot() { return 0; }
 int PostBoot() {
-    SetML_Value(-3); 
-
-    // Wait for frontend to finish loading
-    while (GetML_Value() != -1)
-        this_thread::sleep_for(chrono::milliseconds(1));
-
+    logViewer->clearLog();
+    workerThread = new WorkerThread();
+    workerThread->start();
     return 0;
-    
-    // runRom();
-    // return 0;
 }

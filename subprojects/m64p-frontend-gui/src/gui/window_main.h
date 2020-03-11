@@ -34,9 +34,7 @@
             void setTitle(std::string title);
             void pluginWarning(QString name);
 
-        private slots:
-            void modloader_boot();
-            
+        private slots:            
             void on_actionOpen_ROM_triggered();
 
             void on_actionPlugin_Paths_triggered();

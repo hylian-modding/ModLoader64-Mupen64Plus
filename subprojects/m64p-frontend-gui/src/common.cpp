@@ -47,23 +47,8 @@ std::string GetAppDir() {
 #include <SDL_thread.h>
 
 static SDL_mutex *ml_lock;
-std::string ml_string = "";
 int ml_value = 0;
 bool isModLoader = false;
-
-std::string GetML_String() {
-    std::string val;
-	SDL_LockMutex(ml_lock);
-    val = ml_string;
-	SDL_UnlockMutex(ml_lock);
-    return val;
-}
-
-void SetML_String(std::string val) {
-	SDL_LockMutex(ml_lock);
-    ml_string = val;
-	SDL_UnlockMutex(ml_lock);
-}
 
 int GetML_Value() {
     int val;
