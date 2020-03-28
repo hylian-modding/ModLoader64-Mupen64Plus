@@ -44,7 +44,11 @@ int initialize(int argc, char *argv[]) {
     return a.exec();
 }
 
-void KillEmuProc(void) {
+thread qtThread;
+void ExecuteThread(void) {
+    int argc; char *argv[] = {""};
+    initialize(argc, argv);
+    
 	if (workerThread != nullptr) {
         (*CoreDoCommand)(M64CMD_STOP, 0, NULL);
 
@@ -54,13 +58,7 @@ void KillEmuProc(void) {
     }
     
 	DetachCoreLib();
-}
 
-thread qtThread;
-void ExecuteThread(void) {
-    int argc; char *argv[] = {""};
-    initialize(argc, argv);
-    KillEmuProc();
     qtThread.join();
 }
 
