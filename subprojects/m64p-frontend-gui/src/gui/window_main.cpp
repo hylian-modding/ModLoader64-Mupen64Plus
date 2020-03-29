@@ -312,36 +312,76 @@ MainWindow::MainWindow(QWidget *parent) :
     restoreGeometry(settings->value("geometry").toByteArray());
     restoreState(settings->value("windowState").toByteArray());
 
-    QActionGroup *my_slots_group = new QActionGroup(this);
-    QAction *my_slots[10];
-    OpenRecent = new QMenu;
-    QMenu * SaveSlot = new QMenu;
-    OpenRecent->setTitle("Open Recent");
-    SaveSlot->setTitle("Change Save Slot");
-    ui->menuFile->insertMenu(ui->actionSave_State, OpenRecent);
-    ui->menuFile->insertSeparator(ui->actionSave_State);
-    ui->menuFile->insertMenu(ui->actionSave_State_To, SaveSlot);
-    ui->menuFile->insertSeparator(ui->actionSave_State_To);
-    for (int i = 0; i < 10; ++i) {
-        my_slots[i] = new QAction(this);
-        my_slots[i]->setCheckable(true);
-        my_slots[i]->setText("Slot " + QString::number(i));
-        my_slots[i]->setActionGroup(my_slots_group);
-        SaveSlot->addAction(my_slots[i]);
-        QAction *temp_slot = my_slots[i];
-        connect(temp_slot, &QAction::triggered,[=](bool checked){
-            if (checked) {
-                int slot = temp_slot->text().remove("Slot ").toInt();
-                if (QtAttachCoreLib())
-                    (*CoreDoCommand)(M64CMD_STATE_SET_SLOT, slot, NULL);
-            }
-        });
-    }
-    my_slots[0]->setChecked(true);
+    if (isModLoader) {
+        // Disable control modloader instance shouldnt have access to
+        QMenuBar *mb = this->findChild<QMenuBar*>("menuBar");
 
-    updateOpenRecent();
-    updateDD(ui);
-    updateGB(ui);
+        // File Menu
+        auto lst = mb->findChild<QMenu*>("menuFile")->actions();
+        ((QAction*)lst.at(0))->setEnabled(false); // 0 actionOpen_ROM
+        ((QAction*)lst.at(1))->setEnabled(false); // 1 actionSave_State
+        ((QAction*)lst.at(2))->setEnabled(false); // 2 actionLoad_State
+        ((QAction*)lst.at(3))->setEnabled(false); // 3 actionSave_State_To
+        ((QAction*)lst.at(4))->setEnabled(false); // 4 actionLoad_State_From
+                                                  // 5 separator
+                                                  // 6 actionTake_Screenshot
+                                                  // 7 separator
+                                                  // 8 actionExit
+        
+        // Emulation Menu
+        lst = mb->findChild<QMenu*>("menuEmulation")->actions();
+                                                  // 0 actionToggle_Fullscreen
+                                                  // 1 separator
+        ((QAction*)lst.at(2))->setEnabled(false); // 2 actionPause_Game
+                                                  // 3 actionMute
+                                                  // 4 separator
+        ((QAction*)lst.at(5))->setEnabled(false); // 5 actionStop_Game
+        ((QAction*)lst.at(6))->setEnabled(false); // 6 actionHard_Reset
+        ((QAction*)lst.at(7))->setEnabled(false); // 7 actionSoft_Reset
+                                                  // 8 actionToggle_Speed_Limiter
+                                                  // 9 separator
+                                                  // 10 actionCheats
+                                                  // 11 separator
+                                                  // 12 actionView_Log
+
+        // Settings Menu
+        lst = mb->findChild<QMenu*>("menuSettings")->actions();
+                                                  // 0 actionPlugin_Paths
+                                                  // 1 actionPlugin_Settings
+                                                  // 2 actionController_Configuration
+        ((QAction*)lst.at(3))->setEnabled(false); // 3 actionVideo_Settings
+    } else {
+        QActionGroup *my_slots_group = new QActionGroup(this);
+        QAction *my_slots[10];
+        OpenRecent = new QMenu;
+        QMenu * SaveSlot = new QMenu;
+        OpenRecent->setTitle("Open Recent");
+        SaveSlot->setTitle("Change Save Slot");
+        ui->menuFile->insertMenu(ui->actionSave_State, OpenRecent);
+        ui->menuFile->insertSeparator(ui->actionSave_State);
+        ui->menuFile->insertMenu(ui->actionSave_State_To, SaveSlot);
+        ui->menuFile->insertSeparator(ui->actionSave_State_To);
+        for (int i = 0; i < 10; ++i) {
+            my_slots[i] = new QAction(this);
+            my_slots[i]->setCheckable(true);
+            my_slots[i]->setText("Slot " + QString::number(i));
+            my_slots[i]->setActionGroup(my_slots_group);
+            SaveSlot->addAction(my_slots[i]);
+            QAction *temp_slot = my_slots[i];
+            connect(temp_slot, &QAction::triggered,[=](bool checked){
+                if (checked) {
+                    int slot = temp_slot->text().remove("Slot ").toInt();
+                    if (QtAttachCoreLib())
+                        (*CoreDoCommand)(M64CMD_STATE_SET_SLOT, slot, NULL);
+                }
+            });
+        }
+        my_slots[0]->setChecked(true);
+
+        updateOpenRecent();
+        updateDD(ui);
+        updateGB(ui);
+    }
 
     if (!settings->contains("coreLibPath")) {
         QStringList files;
