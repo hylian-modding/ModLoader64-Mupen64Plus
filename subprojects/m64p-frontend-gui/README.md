@@ -32,3 +32,5 @@ qmake ../mupen64plus-gui.pro
 make -j`nproc`
 ```
 Then you can run ```./mupen64plus-gui```.
+
+Note: On par with the Mar 29, 2020 update - except the crappy new controller config.

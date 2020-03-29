@@ -1,8 +1,6 @@
-QT += core gui
+QT += widgets
 CONFIG += c++11
 QMAKE_PROJECT_DEPTH = 0
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 RC_ICONS = ../src/gfx/mupen64plus.ico
 ICON = ../src/gfx/mupen64plus.icns
@@ -81,6 +79,7 @@ win32 {
     CONFIG += shared
 }
 !win32 {
+    QT += dbus
     QMAKE_CFLAGS += -std=c++11 -fpermissive
     QMAKE_CXXFLAGS += -std=c++11 -fpermissive
     QMAKE_LFLAGS += -std=c++11 -fpermissive

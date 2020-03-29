@@ -1,4 +1,5 @@
 #include "imports_gui.h"
+#include "../osal/imports_osal.h"
 #include "../common.h"
 #include "../plugin.h"
 #include "../interface.h"
@@ -35,8 +36,12 @@ void MainWindow::updatePlugins()
     if (!settings->contains("audioPlugin")) {
         Filter.replace(0,"mupen64plus-audio*");
         current = PluginDir->entryList(Filter);
+        default_value = "mupen64plus-audio-sdl";
+        default_value += OSAL_DLL_EXTENSION;
         if (current.isEmpty())
             settings->setValue("audioPlugin", "dummy");
+        else if (current.indexOf(default_value) != -1)
+            settings->setValue("audioPlugin", default_value);
         else
             settings->setValue("audioPlugin", current.at(0));
     }
@@ -55,8 +60,12 @@ void MainWindow::updatePlugins()
     if (!settings->contains("inputPlugin")) {
         Filter.replace(0,"mupen64plus-input*");
         current = PluginDir->entryList(Filter);
+        default_value = "mupen64plus-input-sdl";
+        default_value += OSAL_DLL_EXTENSION;
         if (current.isEmpty())
             settings->setValue("inputPlugin", "dummy");
+        else if (current.indexOf(default_value) != -1)
+            settings->setValue("inputPlugin", default_value);
         else
             settings->setValue("inputPlugin", current.at(0));
     }
@@ -64,6 +73,60 @@ void MainWindow::updatePlugins()
     qtInputPlugin = settings->value("inputPlugin").toString();
     qtRspPlugin = settings->value("rspPlugin").toString();
     qtGfxPlugin = settings->value("videoPlugin").toString();
+}
+
+void MainWindow::updateDD(Ui::MainWindow *ui)
+{
+    QMenu *DD = new QMenu;
+    DD->setTitle("64DD");
+    ui->menuFile->insertMenu(ui->actionTake_Screenshot, DD);
+
+    QAction *fileSelect = new QAction(this);
+    QString current = settings->value("DD_ROM").toString();
+    fileSelect->setText("64DD IPL ROM: " + current);
+    DD->addAction(fileSelect);
+    connect(fileSelect, &QAction::triggered, [=](){
+        QString filename = QFileDialog::getOpenFileName(this,
+            tr("64DD IPL ROM"), NULL, tr("64DD ROM File (*.n64)"));
+        if (!filename.isNull()) {
+            settings->setValue("DD_ROM", filename);
+            QString current = filename;
+            fileSelect->setText("64DD IPL ROM: " + current);
+        }
+    });
+
+    QAction *fileSelect2 = new QAction(this);
+    current = settings->value("DD_DISK").toString();
+    fileSelect2->setText("64DD Disk: " + current);
+    DD->addAction(fileSelect2);
+    connect(fileSelect2, &QAction::triggered,[=](){
+        QString filename = QFileDialog::getOpenFileName(this,
+            tr("64DD Disk File"), NULL, tr("64DD Disk File (*.ndd)"));
+        if (!filename.isNull()) {
+            settings->setValue("DD_DISK", filename);
+            QString current = filename;
+            fileSelect2->setText("64DD Disk: " + current);
+        }
+    });
+
+    QAction *clearSelect = new QAction(this);
+    clearSelect->setText("Clear 64DD Selections");
+    DD->addAction(clearSelect);
+    connect(clearSelect, &QAction::triggered,[=](){
+        settings->remove("DD_ROM");
+        settings->remove("DD_DISK");
+        fileSelect->setText("64DD IPL ROM: ");
+        fileSelect2->setText("64DD Disk: ");
+    });
+
+    // DD->addSeparator();
+
+    // QAction *startGame = new QAction(this);
+    // startGame->setText("Start 64DD");
+    // DD->addAction(startGame);
+    // connect(startGame, &QAction::triggered,[=](){
+    //     openROM("");
+    // });
 }
 
 void MainWindow::updateGB(Ui::MainWindow *ui)
@@ -277,6 +340,7 @@ MainWindow::MainWindow(QWidget *parent) :
     my_slots[0]->setChecked(true);
 
     updateOpenRecent();
+    updateDD(ui);
     updateGB(ui);
 
     if (!settings->contains("coreLibPath")) {
@@ -450,12 +514,18 @@ void MainWindow::deleteWindowGL()
 void MainWindow::stopGame()
 {
     if (workerThread != nullptr) {
-        (*CoreDoCommand)(M64CMD_STOP, 0, NULL);
+        if (workerThread->isRunning()) {
+            (*CoreDoCommand)(M64CMD_STOP, 0, NULL);
+            
+            while (workerThread->isRunning())
+                QCoreApplication::processEvents();
+        }
 
-        while (workerThread->isRunning())
-            QCoreApplication::processEvents();
         workerThread = nullptr;
     }
+
+    PluginUnload();
+    DetachCoreLib();
 }
 
 void MainWindow::openROM(QString filename)
@@ -619,10 +689,8 @@ void MainWindow::on_actionVideo_Settings_triggered()
 {
     if (QtAttachCoreLib()) {
         PluginSearchLoad();
-        QString lib_location = qtPluginDir + "/" + qtGfxPlugin;
-        QLibrary myLib(lib_location);
         typedef void (*Config_Func)();
-        Config_Func Config_DoConfig = (Config_Func) myLib.resolve("Config_DoConfig");
+        Config_Func Config_DoConfig = (Config_Func) osal_dynlib_getproc(g_PluginMap[0].handle, "Config_DoConfig");
         Config_DoConfig();
     }
 }
