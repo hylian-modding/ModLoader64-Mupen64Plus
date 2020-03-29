@@ -101,7 +101,9 @@ void DebugCallback(void *Context, int level, const char *message)
     }
     else
         output = QString("%1 Unknown: %2\n").arg((const char *) Context, message);
-    logViewer->addLog(output);
+    
+    if (!output.isEmpty())
+        logViewer->addLog(output);
 }
 
 static char* media_loader_get_gb_cart_rom(void*, int control_id)
@@ -146,12 +148,26 @@ static char* media_loader_get_gb_cart_ram(void*, int control_id)
 
 static char* media_loader_get_dd_rom(void*)
 {
-    return NULL;
+    QString pathname = settings->value("DD_ROM").toString();
+
+    if (pathname.isEmpty())
+        return NULL;
+    else {
+        char *path = strdup(pathname.toLatin1().data());
+        return path;
+    }
 }
 
 static char* media_loader_get_dd_disk(void*)
 {
-    return NULL;
+    QString pathname = settings->value("DD_DISK").toString();
+
+    if (pathname.isEmpty())
+        return NULL;
+    else {
+        char *path = strdup(pathname.toLatin1().data());
+        return path;
+    }
 }
 
 static m64p_media_loader media_loader =
@@ -232,7 +248,7 @@ m64p_error runRom() {
     {
         DebugMessage(M64MSG_WARNING, "couldn't get ROM header information from core library");
         DetachCoreLib();
-        return 0; // M64ERR_INVALID_STATE
+        return M64ERR_SUCCESS;
     }
 
     /* search for and load plugins */

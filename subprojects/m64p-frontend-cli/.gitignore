@@ -6,4 +6,5 @@
 /project/Makefile
 /project/Makefile.Debug
 /project/Makefile.Release
+/project/mupen64plus-frontend_resource.rc
 /project/.qmake.stash

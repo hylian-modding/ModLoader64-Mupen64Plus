@@ -38,6 +38,9 @@
     Finally, you can run the script-build.bat to complete the
     mupen64plus.node build.
 
+    -- QT File dependancies to run the mupen-gui app/lib
+        - located in subprojects\m64p-frontend-gui\qt-deps
+
 ### Build instructions:
 Open a command-prompt or power-shell and navigate to
 this directory. Then type the command:
@@ -61,3 +64,4 @@ and the mupen64plus-gui at https://github.com/m64p/mupen64plus-gui.
 ### CREDITS:
 - SpiceyWolf ~ Creation/Maintenance of the repository.
 - denoflions ~ Debugging and guidence of features.
+- Sylvain    ~ Qt deps and help with gui work.

@@ -5,6 +5,7 @@ using namespace std;
 #include "gui/imports_gui.h"
 #include "imports_qt.h"
 #include "common.h"
+#include "main.h"
 #include "plugin.h"
 
 // #########################################################
@@ -13,6 +14,12 @@ using namespace std;
 
 MainWindow *w;
 int initialize(int argc, char *argv[]) {
+#ifdef WIN32
+    // Set windows qt plugins dependancy path
+    auto path = QString{ "%1/%2/%3" }.arg(QDir::currentPath(), "emulator", "plugins");
+    QCoreApplication::addLibraryPath(path);
+#endif
+
     QApplication a(argc, argv);
     QCoreApplication::setApplicationName("Mupen64Plus Gui Frontend");
 
@@ -44,44 +51,28 @@ int initialize(int argc, char *argv[]) {
     return a.exec();
 }
 
-#ifdef WIN32
-    DWORD WINAPI ExecuteM64PThread(void* data) {
-        int argc; char *argv[] = {""};
-        initialize(argc, argv);
-        return 0;
+thread qtThread;
+void ExecuteThread(void) {
+    initialize(0, NULL);
+    
+	if (workerThread != nullptr) {
+        (*CoreDoCommand)(M64CMD_STOP, 0, NULL);
+
+        while (workerThread->isRunning())
+            QCoreApplication::processEvents();
+        workerThread = nullptr;
     }
-#else
-	#include <pthread.h>
+    
+	DetachCoreLib();
 
-    pthread_t threadId;
+    qtThread.join();
+}
 
-    void* ExecuteM64PThread(void* data) {
-        int argc; char *argv[] = {""};
-        initialize(argc, argv);
-        auto err = pthread_join(threadId, NULL);
-        if (err) printf("Failed to join Thread : %s\n", strerror(err));
-        return NULL;
-    }
-#endif
-
-int main(int argc, char *argv[]) { initialize(argc, argv); }
+int main(int argc, char *argv[]) { initialize(argc, argv); return 0; }
 int Main_ModLoader() {
     isModLoader = true;
-    printf("Current Working Directory[%s]\n", GetAppDir().c_str());
 
-	#ifdef WIN32
-        HANDLE thread = CreateThread(NULL, 0, ExecuteM64PThread, NULL, 0, NULL);
-        if (thread == NULL) {
-            printf("Failed to start M64P Async process.\n");
-            return 1;
-        }
-    #else
-        int thread = pthread_create(&threadId, NULL, &ExecuteM64PThread, NULL);
-        if (thread != 0) {
-            printf("Failed to start M64P Async process.\n");
-            return 1;
-        }
-    #endif
+    qtThread = thread(ExecuteThread);
 
     // Wait for frontend to finish loading
     while (GetML_Value() != -1)

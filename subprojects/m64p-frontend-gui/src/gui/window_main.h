@@ -78,6 +78,7 @@
         private:
             void stopGame();
             void updateOpenRecent();
+            void updateDD(Ui::MainWindow *ui);
             void updateGB(Ui::MainWindow *ui);
             void findRecursion(const QString &path, const QString &pattern, QStringList *result);
             Ui::MainWindow *ui;

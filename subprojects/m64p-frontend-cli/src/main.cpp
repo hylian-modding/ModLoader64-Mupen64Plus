@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <thread>
+using namespace std;
 
 #include <SDL.h>
 #include <SDL_main.h>
@@ -436,8 +438,11 @@ static m64p_media_loader l_media_loader =
 * modloader functions
 */
 
-void KillEmuProc(void) {
-	int i;
+thread mThread;
+void ExecuteThread(void) {
+    (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
+
+    int i;
 
 	/* detach plugins from core and unload them */
 	for (i = 0; i < 4; i++)
@@ -454,27 +459,9 @@ void KillEmuProc(void) {
 	/* Shut down and release the Core library */
 	(*CoreShutdown)();
 	DetachCoreLib();
+
+    mThread.join();
 }
-
-#ifdef WIN32
-    DWORD WINAPI ExecuteM64PThread(void* data) {
-        (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
-        KillEmuProc();
-        return 0;
-    }
-#else
-	#include <pthread.h>
-
-    pthread_t threadId;
-
-    void* ExecuteM64PThread(void* data) {
-        (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
-        KillEmuProc();
-        auto err = pthread_join(threadId, NULL);
-        if (err) printf("Failed to join Thread : %s\n", strerror(err));
-        return NULL;
-    }
-#endif
 
 int Main_ModLoader() {
     // Platform specific core preloader
@@ -606,19 +593,6 @@ int PreBoot() {
 
 int PostBoot() {
 	/* run the game */
-#ifdef WIN32
-	HANDLE thread = CreateThread(NULL, 0, ExecuteM64PThread, NULL, 0, NULL);
-	if (thread == NULL) {
-		printf("Failed to start M64P Async process.\n");
-		return 1;
-	}
-#else
-	int thread = pthread_create(&threadId, NULL, &ExecuteM64PThread, NULL);
-	if (thread != 0) {
-		printf("Failed to start M64P Async process.\n");
-		return 1;
-	}
-#endif
-
+    mThread = thread(ExecuteThread);
 	return 0;
 }
