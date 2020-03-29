@@ -232,7 +232,7 @@ m64p_error runRom() {
     {
         DebugMessage(M64MSG_WARNING, "couldn't get ROM header information from core library");
         DetachCoreLib();
-        return 0; // M64ERR_INVALID_STATE
+        return M64ERR_SUCCESS;
     }
 
     /* search for and load plugins */

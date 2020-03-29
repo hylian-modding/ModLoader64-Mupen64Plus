@@ -5,6 +5,7 @@ using namespace std;
 #include "gui/imports_gui.h"
 #include "imports_qt.h"
 #include "common.h"
+#include "main.h"
 #include "plugin.h"
 
 // #########################################################
@@ -46,8 +47,7 @@ int initialize(int argc, char *argv[]) {
 
 thread qtThread;
 void ExecuteThread(void) {
-    int argc; char *argv[] = {""};
-    initialize(argc, argv);
+    initialize(0, NULL);
     
 	if (workerThread != nullptr) {
         (*CoreDoCommand)(M64CMD_STOP, 0, NULL);
@@ -62,7 +62,7 @@ void ExecuteThread(void) {
     qtThread.join();
 }
 
-int main(int argc, char *argv[]) { initialize(argc, argv); }
+int main(int argc, char *argv[]) { initialize(argc, argv); return 0; }
 int Main_ModLoader() {
     isModLoader = true;
 
