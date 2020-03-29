@@ -1,7 +1,11 @@
 *.log
 *.ipch
+*.pro.user
+*.vcxproj.user
+*.sln
 .vscode
 .vs
 /bin
 /build
 /node_modules
+/subprojects/m64p-frontend-gui/build-*
