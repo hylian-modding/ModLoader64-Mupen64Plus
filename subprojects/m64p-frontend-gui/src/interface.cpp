@@ -8,6 +8,9 @@
 #include "interface.h"
 #include "version.h"
 
+using pfn_ml64_InputReset = m64p_error(CALL*)();
+pfn_ml64_InputReset fn_ml64_InputReset;
+
 QString qtCoreDirPath;
 QString qtConfigDir;
 int g_CoreCapabilities;
@@ -358,6 +361,7 @@ m64p_error AttachCoreLib(const char *CoreLibFilepath)
 
         CoreSaveOverride = (ptr_CoreSaveOverride)osal_dynlib_getproc(CoreHandle, "CoreSaveOverride");
     	IsMupenReady = (ptr_IsMupenReady)osal_dynlib_getproc(CoreHandle, "IsMupenReady");
+        fn_ml64_InputReset = (pfn_ml64_InputReset)osal_dynlib_getproc(CoreHandle, "ml64_InputReset");
     }
 
     return M64ERR_SUCCESS;

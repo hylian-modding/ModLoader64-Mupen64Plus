@@ -1002,6 +1002,8 @@ EXPORT void CALL RomClosed(void)
 *******************************************************************/
 EXPORT int CALL RomOpen(void)
 {
+    load_configuration(0);
+
     int i;
 
     // init SDL joystick subsystem
