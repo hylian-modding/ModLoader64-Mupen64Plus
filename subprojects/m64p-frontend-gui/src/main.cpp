@@ -14,6 +14,12 @@ using namespace std;
 
 MainWindow *w;
 int initialize(int argc, char *argv[]) {
+#ifdef WIN32
+    // Set windows qt plugins dependancy path
+    auto path = QString{ "%1/%2/%3" }.arg(QDir::currentPath(), "emulator", "plugins");
+    QCoreApplication::addLibraryPath(path);
+#endif
+
     QApplication a(argc, argv);
     QCoreApplication::setApplicationName("Mupen64Plus Gui Frontend");
 
