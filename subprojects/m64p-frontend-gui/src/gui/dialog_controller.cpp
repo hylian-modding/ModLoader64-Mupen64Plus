@@ -1,6 +1,5 @@
 #include <SDL.h>
 
-#include <QCloseEvent>
 #include "imports_gui.h"
 #include "../common.h"
 #include "../interface.h"
@@ -406,13 +405,4 @@ ControllerDialog::ControllerDialog()
     connect(resetButton, SIGNAL (released()),this, SLOT (handleResetButton()));
     mainLayout->addWidget(resetButton);
     setLayout(mainLayout);
-}
-
-using pfn_ml64_InputReset = m64p_error(CALL*)();
-extern pfn_ml64_InputReset fn_ml64_InputReset;
-
-void ControllerDialog::closeEvent(QCloseEvent* e)
-{
-    fn_ml64_InputReset();
-    e->accept();
 }

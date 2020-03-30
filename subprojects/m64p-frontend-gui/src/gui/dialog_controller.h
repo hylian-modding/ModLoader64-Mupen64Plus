@@ -28,7 +28,6 @@
             ControllerDialog();
         private slots:
             void handleResetButton();
-            void closeEvent(QCloseEvent* e) override;
     };
 
 #endif
