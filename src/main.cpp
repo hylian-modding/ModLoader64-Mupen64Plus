@@ -1,9 +1,9 @@
 #include <napi.h>
+#include "node/callback.h"
+#include "node/interface.h"
+#include "node/memory.h"
+#include "node/utility.h"
 #include "yaz0/yaz0.h"
-#include "emulator/callback.h"
-#include "emulator/interface.h"
-#include "emulator/memory.h"
-#include "emulator/utility.h"
 
 Napi::Object InitAll(Napi::Env env, Napi::Object exports) {
   Yaz0_Init(env, exports);
