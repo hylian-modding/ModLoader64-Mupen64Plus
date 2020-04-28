@@ -607,6 +607,9 @@ static int get_saveslot_from_keysym(int keysym)
 * sdl keyup/keydown handlers
 */
 
+void do_nothing() {
+}
+
 void event_sdl_keydown(int keysym, int keymod)
 {
     int slot;
@@ -622,17 +625,23 @@ void event_sdl_keydown(int keysym, int keymod)
     else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdFullscreen)))
         gfx.changeWindow();
     else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdSave)))
-        main_state_save(0, NULL); /* save in mupen64plus format using current slot */
+        //main_state_save(0, NULL); /* save in mupen64plus format using current slot */
+        do_nothing();
     else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdLoad)))
-        main_state_load(NULL); /* load using current slot */
+        //main_state_load(NULL); /* load using current slot */
+        do_nothing();
     else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdIncrement)))
-        main_state_inc_slot();
+        //main_state_inc_slot();
+        do_nothing();
     else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdReset)))
-        main_reset(0);
+        //main_reset(0);
+        do_nothing();
     else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdSpeeddown)))
-        main_speeddown(5);
+        //main_speeddown(5);
+        do_nothing();
     else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdSpeedup)))
-        main_speedup(5);
+        //main_speedup(5);
+        do_nothing();
     else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdScreenshot)))
         main_take_next_screenshot();    /* screenshot will be taken at the end of frame rendering */
     else if (keysym == sdl_keysym2native(ConfigGetParamInt(l_CoreEventsConfig, kbdPause)))
@@ -693,4 +702,3 @@ void event_set_gameshark(int active)
     // notify front-end application that gameshark button state has changed
     StateChanged(M64CORE_INPUT_GAMESHARK, GamesharkActive);
 }
-
