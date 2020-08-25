@@ -14,7 +14,7 @@ Number npmUtilBitCountBuffer(const CallbackInfo& info)
         length = arr.ByteLength() - offset;
 
     size_t count = 0;
-    for (size_t i = 0; i < length; i++) 
+    for (size_t i = offset; i < length; i++) 
         for (size_t n = 0; n < 8; n++) 
             if (arr[i] & (1 << n)) count++; 
     return Number::New(info.Env(), count);
